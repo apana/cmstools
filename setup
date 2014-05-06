@@ -1,0 +1,18 @@
+#!/bin/csh
+
+if ( $?CMS_PATH ) then
+  echo "UAF environment already setup"
+else
+  echo "Setting up cmsuaf environment"
+  cmsuaf
+endif
+
+set cmsswdir = /uscmst1b_scratch/lpc1/lpctrig/apana/Collisions/ntuples/CMSSW_3_6_3
+echo "Using CMSSW project area $cmsswdir to setup root"
+
+cd $cmsswdir
+
+cmsenv
+echo ""
+cd -
+# env

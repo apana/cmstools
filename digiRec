@@ -1,0 +1,87 @@
+#!/bin/sh -f
+
+ARGS=3
+if [ $# -lt "$ARGS" ]
+# Test number of arguments to script (always a good idea).
+then
+  echo "Usage: `basename $0` <nevts> <ptmin> <ptmax> "
+  exit $E_BADARGS
+fi
+
+nevts=$1
+ptmin=$2
+ptmax=$3
+cmsvers=100
+
+echo
+echo ">>> Beginning cmsRun execution on `date`  <<<"
+echo ">>> Number of events to process: $nevts <<<"
+echo
+
+#create config file
+export WORKDIR=${PWD}
+if [ -n "${CMS_PATH:-}" ]; then
+  echo "CMSSW computing environment already setup"
+else
+#setup the environment
+   echo "Setting up CMSSW computing environment"
+   #export PATH=/bin:/usr/bin:/usr/local/bin:/usr/krb5/bin:/usr/afsws/bin:/usr/krb5/bin/aklog:{$PATH}
+   . /uscmst1/prod/sw/cms/shrc uaf
+fi
+
+cd ${WORKDIR}
+pwd
+eval `scramv1 runtime -sh`
+export CFG=runit_${RANDOM}.cfg
+cat > $CFG <<EOF
+process RP = {
+# initialize  MessageLogger
+   include "FWCore/MessageService/data/MessageLogger.cfi"
+   replace MessageLogger.cout.threshold = "ERROR"
+   replace MessageLogger.cerr.default.limit = 10
+
+service = Timing {}
+
+include "Configuration/Examples/data/DIGI.cff"
+include "Configuration/Examples/data/RECO.cff"
+# include "Configuration/Examples/data/RECO_onlyCkf.cff"
+# include "Configuration/JetMET/data/calorimetry-jetmetcorrections.cff"
+
+    source = PoolSource {
+	untracked vstring fileNames = {
+	    "file:/uscmst1b_scratch/lpc1/cmsjtmet/apana/mcfiles/${cmsvers}/qcd_sim_pt_${ptmin}_${ptmax}_501_200.root"
+	}
+	untracked int32 maxEvents = ${nevts}
+    }
+
+
+    module NRECO = PoolOutputModule {
+	untracked string fileName = '/uscmst1b_scratch/lpc1/cmsjtmet/apana/mcfiles/${cmsvers}/qcd_digireco_pt_${ptmin}_${ptmax}_501_200.root'
+	untracked vstring outputCommands =
+        { # drop a bunch of branches to keep output file size reasonable
+            "drop *",
+            "keep CaloTowersSorted_*_*_*",
+            "keep recoCaloJets_*_*_*",
+            "keep recoGenJets_*_*_*",
+            "keep recoCaloMETs_*_*_*",
+            "keep recoGenMETs_*_*_*",
+            "keep recoMETs_*_*_*",
+	    "keep edmHepMCProduct_*_*_*"
+	}
+    }
+
+   sequence ladigi = {mix, hcalDigis, ecalDigiSequence}
+ # path p1 = {reconstruction, caloJetMetCorrections}
+   path p1 = { ladigi, (ecalLocalRecoSequence & hcalLocalRecoSequence) , ecalClusteringSequence,jetmetrecontruction}
+   endpath outpath = { NRECO}
+
+}
+
+
+
+EOF
+cmsRun -p ${WORKDIR}/${CFG}
+rm $CFG
+echo
+echo ">>> Ending cmsRun execution on `date`  <<<"
+echo

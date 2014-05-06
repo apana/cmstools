@@ -1,0 +1,33 @@
+#
+# setup crab
+#
+if ($#argv > 0) then
+    set vers=$1
+else
+    set vers=CRAB
+    # set SLVersion=`cat /etc/redhat-release | grep -c Boron`
+    # if ($SLVersion == 1) then
+    #   set vers=CRAB_2_6_6
+    # endif
+endif
+
+if ( ! $?CMS_PATH ) then
+  echo "UAF environment not set"
+  exit 1
+endif
+
+if ( ! $?GLITE_LOCATION ) then
+  echo
+  echo "Setting up gLite_SL5 environment"
+  source /uscmst1/prod/grid/gLite_SL5.csh
+endif
+
+echo
+echo "*************************"
+echo " running voms-proxy-init -voms cms -valid 168:0"
+echo "*************************"
+echo
+
+voms-proxy-init -voms cms -valid 168:0
+
+echo "Check proxy with: voms-proxy-info"

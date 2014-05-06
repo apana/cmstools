@@ -1,0 +1,40 @@
+#!/bin/csh
+#
+# setup lumi
+#
+
+
+if ( $?CMS_PATH ) then
+  echo "UAF environment already setup"
+else
+  echo "Setting up cmsuaf environment"
+  cmsuaf
+endif
+
+# set cmsswdir = /uscmst1b_scratch/lpc1/lpctrig/apana/Collisions/ntuples/CMSSW_3_6_3/src/
+# set cmsswdir = /uscmst1b_scratch/lpc1/lpctrig/apana/Collisions/lumiCalc/CMSSW_3_7_0/src/
+
+set cmsswdir = /uscmst1b_scratch/lpc1/lpctrig/apana/Lumi/CMSSW_3_8_0/src
+
+
+echo "Using CMSSW project area $cmsswdir"
+
+cd $cmsswdir
+
+setenv LumiDir ${cmsswdir}/RecoLuminosity/LumiDB/scripts
+
+alias lumiCalc "$LumiDir/lumiCalc.py -c frontier://LumiProd/CMS_LUMI_PROD"
+
+set lumialias = `alias lumiCalc`
+# echo $lumialias
+
+# alias lumiCalc
+
+cmsenv
+echo
+echo "  Tag: " `showtags | grep LumiDB`
+echo 
+echo "  lumiCalc aliased to " $lumialias
+cd -
+echo
+# env

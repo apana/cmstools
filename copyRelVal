@@ -1,0 +1,33 @@
+#!/bin/bash
+
+INDIR=/castor/cern.ch/cms
+OUTDIR=RelVal-RelVal151QCD_pt15_20
+NBINS=2
+INFILES=(
+/store/RelVal/2007/6/30/RelVal-RelVal151QCD_pt15_20-1183227447/0000/6411C991-5227-DC11-B285-001617DBD348.root
+/store/RelVal/2007/6/30/RelVal-RelVal151QCD_pt15_20-1183227447/0000/D4D7DBB1-4327-DC11-8BD4-000423D9880C.root
+)
+
+mkdir /pnfs/cms/WAX/2/apana/hlt/${OUTDIR}
+chmod +775 /pnfs/cms/WAX/2/apana/hlt/${OUTDIR}
+
+((ibin=0))
+# Double parentheses permit space when setting a variable, as in C.
+
+while (( ibin < NBINS ))
+do
+  LFN=${INDIR}${INFILES[ibin]} 
+  INFILE=srm://srm.cern.ch:8443//srm/managerv1?SFN=${LFN}
+
+  FILENAME=`basename ${INFILES[ibin]}`
+
+
+  OUTFILE=srm://cmssrm.fnal.gov:8443/srm/managerv1?SFN=/2/apana/hlt/${OUTDIR}/${FILENAME} 
+
+  echo $INFILE
+  echo $OUTFILE
+
+
+  srmcp $INFILE $OUTFILE
+  ((ibin += 1))   # let "ibin+=1"
+done

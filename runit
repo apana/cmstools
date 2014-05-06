@@ -1,0 +1,39 @@
+#!/bin/sh -f
+# this is a generic shell script wrapper for a cmsRun configuration file
+#
+nevts=1
+ptmin=0
+ptmax=15
+
+echo
+echo ">>> Beginning cmsRun execution on `date`  <<<"
+echo ">>> Number of events to process: $nevts <<<"
+echo
+
+#create config file
+export WORKDIR=${PWD}
+if [ -n "${CMS_PATH:-}" ]; then
+  echo "CMSSW computing environment already setup"
+else
+#setup the environment
+   echo "Setting up CMSSW computing environment"
+   export PATH=/bin:/usr/bin:/usr/local/bin:/usr/krb5/bin:/usr/afsws/bin:/usr/krb5/bin/aklog:{$PATH}
+   . /afs/fnal.gov/files/code/cms/setup/shrc uaf
+   export SCRAM_ARCH=`scramv1 arch`
+fi
+
+cd $WORKDIR
+pwd
+eval `scramv1 runtime -sh`
+
+cd ${WORKDIR}
+export CFG=runit_${RANDOM}.cfg
+cat > $CFG <<EOF
+### ccla put config file here
+### ccla
+EOF
+cmsRun -p ${WORKDIR}/${CFG}
+rm $CFG
+echo
+echo ">>> Ending cmsRun execution on `date`  <<<"
+echo

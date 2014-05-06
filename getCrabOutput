@@ -1,0 +1,22 @@
+#!/bin/bash
+
+DIRS=(
+crab_0_070814_181133
+crab_0_070814_181406
+crab_0_070814_181534
+crab_0_070814_181655
+crab_0_070814_181827
+crab_0_070814_181956
+crab_0_070814_182106
+crab_0_070814_182233
+)
+NDIRS=8
+
+((idir=0))
+while (( idir < NDIRS ))
+do
+  crab -status -c ${DIRS[idir]} 
+  crab -getoutput -c ${DIRS[idir]} 1-10
+  # echo ${DIRS[idir]}
+  ((idir += 1))   # let "idir+=1"
+done

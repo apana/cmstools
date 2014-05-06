@@ -1,0 +1,31 @@
+#!/bin/csh
+
+# set type=notes  # papers or notes
+set type=papers  # papers or notes
+
+set tdrdir=$TDR_HOME
+echo "\nUsing directory $tdrdir to setup tdr area"
+
+cd $tdrdir
+if ($type == papers) then
+  eval `papers/tdr runtime -csh`
+else
+  eval `notes/tdr runtime -csh`
+endif
+
+echo ""
+
+set xxx = QCD-10-XXX
+if ($#argv > 0) then
+  set xxx = $1
+endif
+
+if ($type == papers) then
+  echo "Run \n\ttdr --style=paper b" $xxx "\nto compile paper\n"
+else
+  echo "Run \n\ttdr --style=pas b" $xxx "\nto compile note\n"
+endif
+cd -
+
+
+

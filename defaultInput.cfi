@@ -1,0 +1,6 @@
+source = PoolSource {
+    untracked int32 maxEvents = -1
+    untracked vstring fileNames = { 'xxx.root' }
+}
+
+

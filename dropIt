@@ -1,0 +1,69 @@
+#!/bin/sh -f
+# this script takes an input rootfile and dumps to screen the tree branches
+# parameters
+
+
+ARGS=1
+if [ $# -lt "$ARGS" ]
+# Test number of arguments to script (always a good idea).
+then
+  echo "Usage: `basename $0` <nevts> <ptmin> <ptmax> "
+  exit $E_BADARGS
+fi
+
+nevts=$1
+
+echo
+echo ">>> Beginning cmsRun execution on `date`  <<<"
+echo ">>> Number of events to process: $nevts <<<"
+echo
+
+#create config file
+export WORKDIR=${PWD}
+if [ -n "${CMS_PATH:-}" ]; then
+  echo "CMSSW computing environment already setup"
+else
+#setup the environment
+   echo "Setting up CMSSW computing environment"
+   #export PATH=/bin:/usr/bin:/usr/local/bin:/usr/krb5/bin:/usr/afsws/bin:/usr/krb5/bin/aklog:{$PATH}
+   . /uscmst1/prod/sw/cms/shrc uaf
+fi
+
+cd ${WORKDIR}
+pwd
+eval `scramv1 runtime -sh`
+export CFG=runit_${RANDOM}.cfg
+cat > $CFG <<EOF
+#process KEEPG4 = {
+process KEEPORG = {
+
+
+    source = PoolSource { 
+	untracked vstring fileNames = {
+            # "file:hltInput.root"
+	    "file:/uscmst1b_scratch/lpc1/cmsjtmet/apana/hlt/l1skims-hlt/ppMuX_l1Skim_4e29-HLT_4318_15.root"
+	}
+    }
+    untracked PSet maxEvents = {untracked int32 input = ${nevts}}
+
+    module G4 = PoolOutputModule {
+	untracked string fileName = 'output.root'
+	untracked vstring outputCommands =
+	{
+	    "drop *",
+	    "keep *_SimG4Object_*_*",
+	    "keep edmHepMCProduct_*_*_*",
+	    "keep recoCaloJets_*_*_Rec1",
+	    "keep recoGenJets_*_*_Rec1"
+	}
+    }
+    
+    #  path p1 = {}
+    endpath outpath = { G4}
+}
+EOF
+cmsRun -p ${WORKDIR}/${CFG}
+rm $CFG
+echo
+echo ">>> Ending cmsRun execution on `date`  <<<"
+echo
