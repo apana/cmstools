@@ -4,27 +4,28 @@ class SetupHistos
 {
 public:
   //constructor
-  SetupHistos(TString Distribution )
+  SetupHistos(TString L1Object , TString Dist)
   {
-    std::cout << "Setting up comparisions for " << Distribution << std::endl;
+    std::cout << "Setting up comparisions for " << L1Object << std::endl;
+    std::cout << "Distribution: " << Dist << std::endl;
     cutString_="";
     L1Collection_="";
     TString var="XXX";
     rebin_=1; xmin_=0.; xmax_=1000.; ymin_=0.1; ymax_=-1; 
-    if (Distribution == "CenJet" || Distribution == "Tau" || Distribution == "ForJet"){
+    if (L1Object == "CenJet" || L1Object == "Tau" || L1Object == "ForJet"){
       L1Collection_="l1extraL1JetParticles_";
-      if (Distribution == "CenJet"){
+      if (L1Object == "CenJet"){
 	var="Central";
-      }else if (Distribution == "ForJet"){
+      }else if (L1Object == "ForJet"){
 	var="Forward";
       }else{
-	var =Distribution;
+	var =L1Object;
       }
       nbins_=64;
       xmax_=256;
-    } else if (Distribution == "NonIsolatedEG" || Distribution == "IsolatedEG"){
+    } else if (L1Object == "NonIsolatedEG" || L1Object == "IsolatedEG"){
       L1Collection_="l1extraL1EmParticles_";
-      if (Distribution == "NonIsolatedEG"){
+      if (L1Object == "NonIsolatedEG"){
 	var="NonIsolated";
       }else{
 	var ="Isolated";
@@ -32,18 +33,18 @@ public:
       nbins_=64;
       xmax_=64;
       rebin_=4;
-    } else if ( Distribution == "MET" || Distribution == "MHT"){ 
+    } else if ( L1Object == "MET" || L1Object == "MHT"){ 
       L1Collection_="l1extraL1EtMissParticles_";
-      var=Distribution;
+      var=L1Object;
       xmax_=460;
       nbins_=100;
       rebin_=5;
-    } else if ( Distribution == "SET" || Distribution == "SHT"){ 
+    } else if ( L1Object == "SET" || L1Object == "SHT"){ 
       L1Collection_="l1extraL1EtMissParticles_";
       xmax_=1200;
       nbins_=100;
       rebin_=5;
-    } else if ( Distribution == "Muon"){
+    } else if ( L1Object == "Muon"){
       L1Collection_="l1extraL1MuonParticles_";
       var="";
       xmax_=140;
@@ -51,8 +52,15 @@ public:
       rebin_=1;
     }
 
+    if ("eta"==Dist){
+      xmin_=-5;
+      xmax_=5;
+      nbins_=20;
+      rebin_=1;
+    }
+
     varString_= var;
-    hname1_= Distribution + "_1", hname2_=Distribution +"_2";
+    hname1_= L1Object + "_1", hname2_=L1Object +"_2";
     h1_ = new TH1F(hname1_,hname1_,nbins_,xmin_,xmax_);
     h2_ = new TH1F(hname2_,hname2_,nbins_,xmin_,xmax_);
     h1_->Sumw2();  h2_->Sumw2();
@@ -98,29 +106,32 @@ void compL1Extra(){
   // TString rootname2 = "L1Extra_noEmul.root";  TString label2 = "HLT";  TString process2 = "_HLT"; TString module2="hltL1extraParticles_";
   // TString rootname2 = "L1Extra_noEmul.root";  TString label2 = "L1NT"; TString process2 = "_L1NTUPLE"; TString module2="l1extraParticles_";
 
-  TString rootname1 = "L1Extra_noEmul.root";  TString label1 = "HLT";  TString process1 = "_HLT"; TString module1 = "hltL1extraParticles_";
-  TString rootname2 = "../../../HLTrigger/Configuration/outputA_stage1.root";  TString label2 = "TEST"; TString process2 = "_TEST"; TString module2="hltL1extraParticles_";
+  // TString rootname1 = "outputA_legacy.root";  TString label1 = "Legacy"; TString process1 = "_TEST"; TString module1 = "hltL1extraParticles_";
+  TString rootname1 = "outputA_ZZZ.root";  TString label1 = "Stage1 rpc"; TString process1 = "_TEST"; TString module1 = "hltL1extraParticles_";
+  //TString rootname2 = "outputA_stage1.root";  TString label2 = "Stage1"; TString process2 = "_TEST"; TString module2="hltL1extraParticles_";
+  TString rootname2 = "../../push/CMSSW_7_2_0_pre7/src/outputA.root";  TString label2 = "Stage1"; TString process2 = "_TEST"; TString module2="hltL1extraParticles_";
 
   TString treename  = "Events";
   
-  TString Var, var;
+  TString L1Obj, dist;
 
-  var="et";
-  // Var        = "Tau";
-  // Var        = "NonIsolatedEG";
-  // Var        = "IsolatedEG";
-  Var        = "Muon";
-  // Var        = "CenJet";
-  // Var        = "ForJet";
-  //Var        = "SET";
-  //Var        = "SHT";
+  dist="et";
+  // dist="eta";
+  // L1Obj        = "Tau";
+  // L1Obj        = "NonIsolatedEG";
+  // L1Obj        = "IsolatedEG";
+  // L1Obj        = "Muon";
+  L1Obj        = "CenJet";
+  // L1Obj        = "ForJet";
+  //L1Obj        = "SET";
+  //L1Obj        = "SHT";
 
  
   TFile *root1=OpenRootFile(rootname1); if (!root1) return;
   TFile *root2=OpenRootFile(rootname2); if (!root2) return;
   //rootUCT->GetListOfKeys()->Print();
 
-  SetupHistos myHists(Var);
+  SetupHistos myHists(L1Obj,dist);
   int nbins=myHists.getNbins();
   int rebin=myHists.getRebin();
 
@@ -146,11 +157,16 @@ void compL1Extra(){
     return;
   }
 
-  TString branch1=l1coll+module1+varString+process1+".obj."+var+"()";  TString cut1="";
-  TString branch2=l1coll+module2+varString+process2+".obj."+var+"()";  TString cut2="";
+  TString branch1=l1coll+module1+varString+process1+".obj."+dist+"()";  TString cut1="";
+  TString branch2=l1coll+module2+varString+process2+".obj."+dist+"()";  TString cut2="";
   
-  cout << "branch1: " << branch1 << endl;
-  cout << "branch2: " << branch2 << endl;
+  if (dist=="eta"){
+  cut1=l1coll+module1+varString+process1+".obj.et()>20";
+  cut2=l1coll+module2+varString+process2+".obj.et()>20";
+
+  }
+  cout << "branch1: " << branch1 << " Cut1: "<< cut1 << endl;
+  cout << "branch2: " << branch2 << " Cut2: "<< cut2 << endl;
 
   _tree1->Project(hname1,branch1,cut1);
   _tree2->Project(hname2,branch2,cut2);
@@ -182,7 +198,7 @@ void compL1Extra(){
   t->SetTextAlign(txtalign);
   //t->SetTextFont(txtfnt);
   //t->SetTextSizePixels(txtsize);
-  t->DrawLatex(xtxt,ytxt,Var);
+  t->DrawLatex(xtxt,ytxt,L1Obj);
 
   if( !c1->IsZombie() ) {
     gPad->Update();
