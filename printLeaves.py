@@ -22,7 +22,8 @@ if __name__ == '__main__':
 
     # print _file0
 
-    treeName="HltTree"
+    ## treeName="HltTree"
+    treeName="Events"
     if narg == 3:
         treeName=sys.argv[2]
     
