@@ -13,16 +13,17 @@ from myPyRootMacros import prepPlot, SetStyle, GetHist, PrepLegend, DrawText
 dist="et"
 ## dist="eta"
 ## L1Obj        = "Tau"
+L1Obj        = "IsoTau"
 ## L1Obj        = "NonIsolatedEG"
 ## L1Obj        = "IsolatedEG"
 ## L1Obj        = "Muon"
-L1Obj        = "CenJet"
+## L1Obj        = "CenJet"
 ## L1Obj        = "ForJet"
 ##L1Obj        = "SET"
 ##L1Obj        = "SHT"
 
-fileName1 = "outputA_ZZZ.root";   label1 = "Stage1 rpc";  process1 = "_TEST";  module1 = "hltL1extraParticles_";
-fileName2 = "../../push/CMSSW_7_2_0_pre7/src/outputA.root";   label2 = "Stage1";  process2 = "_TEST";  module2="hltL1extraParticles_";
+fileName1 = "SimL1Emulator_Stage1_PP.root";   label1 = "Old";  process1 = "_L1TEMULATION";  module1="l1ExtraLayer2_";
+fileName2 = "/afs/cern.ch/work/a/apana/L1Upgrade/Emulator/tau/test/CMSSW_7_2_0_pre8/src/L1Trigger/L1TCalorimeter/test/SimL1Emulator_Stage1_PP.root";              label2 = "New";  process2 = "_L1TEMULATION";  module2="l1ExtraLayer2_";
 
 #===============================================================
 
@@ -33,7 +34,7 @@ class SetupHistos():
         self.l1coll="XXX"; self.varString=""; self.cutString=""; self.logy=1; self.ymin=0.1; self.ymax=-1; 
         nbins_=100; xmin_=0; xmax_=1000.; rebin_=1;
 
-        if (L1Object_ == "CenJet" or L1Object_ == "Tau" or L1Object_ == "ForJet"):
+        if (L1Object_ == "CenJet" or L1Object_ == "Tau" or L1Object_ == "IsoTau" or L1Object_ == "ForJet"):
             self.l1coll="l1extraL1JetParticles_";
             if L1Object_ == "CenJet":
                 self.l1obj= "Central";
@@ -93,6 +94,8 @@ if __name__ == '__main__':
 #===============================================================
 
 
+    print "\n",fileName1
+    print fileName2,"\n"
     f1 = ROOT.TFile.Open(fileName1);  tree1=ROOT.gDirectory.Get("Events")
     f2 = ROOT.TFile.Open(fileName2);  tree2=ROOT.gDirectory.Get("Events")
 
@@ -101,6 +104,7 @@ if __name__ == '__main__':
     branch1=histos.l1coll+module1+histos.l1obj+process1+".obj."+dist+"()";   cut1="";
     branch2=histos.l1coll+module2+histos.l1obj+process2+".obj."+dist+"()";   cut2="";
 
+    ## branch2="l1extraL1JetParticles_l1ExtraLayer2_IsoTau_L1TEMULATION.obj.et()";
     print branch1
     print branch2
 
