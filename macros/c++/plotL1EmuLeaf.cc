@@ -4,18 +4,21 @@
 //
 ///////////////////////////////////////////////////////////////////////////////////////
 
-TString rootname = "../../../../L1Trigger/L1TCalorimeter/test/SimL1Emulator_Stage1_PP.root";
+// TString rootname = "../../../../L1Trigger/L1TCalorimeter/test/SimL1Emulator_Stage1_PP.root";
+TString rootname = "SimL1Emulator_Stage1_PP.root";
 
 TString Var; // Which Distribution to plot
 
-Var        = "IsolatedEG";
+// Var        = "IsolatedEG";
 // Var        = "RelaxedEG";
-// Var        = "Tau";
+Var        = "IsoTau";
+// Var        = "RlxTau";
 // Var        = "Jet";
 // Var        = "MET";
 // Var        = "MHT";
 // Var        = "SET";
 // Var        = "SHT";
+// not available Var        = "HfRingEtSums";
 
 
 class SetupHistos
@@ -24,15 +27,20 @@ public:
   //constructor
   SetupHistos(TString Distribution )
   {
-
     std::cout << "Plotting " << Distribution << " Distribution"<< std::endl;
     cutString_="";
     theObject_="";
+    subColl_="";
     rebin_=1; xmin_=0.; xmax_=1000.; ymin_=0.1; ymax_=-1; 
-    if (Distribution == "Tau"){
+    if (Distribution == "IsoTau" || Distribution == "RlxTau"){
       nbins_=64;
-      xmax_=64;
+      xmax_=256;
       theObject_="l1tTauBXVector";
+      if (Distribution == "IsoTau"){
+	subColl_="isoTaus";
+      } else{
+	subColl_="rlxTaus";
+      }
     } else if (Distribution == "RelaxedEG" || Distribution == "IsolatedEG"){
       nbins_=64;
       xmax_=64;
@@ -45,14 +53,19 @@ public:
       }
     } else if ( Distribution == "MET" || Distribution == "MHT" || Distribution == "SET" || Distribution == "SHT"){ 
       theObject_="l1tEtSumBXVector";
-      nbins_=100;
+      nbins_=201;
       rebin_=5;
       if (Distribution == "MET"){
 	xmax_=460;
 	cutString_=theObject_ + "_caloStage1FinalDigis__L1TEMULATION.obj.data_.type_==2";
       }else if (Distribution == "MHT") {
-	xmax_=460;
+	//xmin_=0.0;
+	//xmax_=101.;
+	xmin_=0.0;
+	xmax_=1.01;
+	rebin_=1;
 	cutString_=theObject_ + "_caloStage1FinalDigis__L1TEMULATION.obj.data_.type_==3";
+	// cutString_=cutString_ + " && " + theObject_ + "_caloStage1FinalDigis__L1TEMULATION.obj.data_.hwQual()==1";
       }else if ( Distribution == "SET"){
 	xmax_=1200;
 	cutString_=theObject_ + "_caloStage1FinalDigis__L1TEMULATION.obj.data_.type_==0";
@@ -65,10 +78,23 @@ public:
       nbins_=100;
       rebin_=5;
       theObject_="l1tJetBXVector";
+    } else if ( Distribution == "HfRingEtSums"){ 
+      xmax_=60;
+      nbins_=60;
+      rebin_=1;
+
     }
 
-    varString_= theObject_ + "_caloStage1FinalDigis__L1TEMULATION.obj.data_.l1t::L1Candidate.et()";
-
+    nbins_=21;
+    xmin_=0;
+    xmax_=21.;
+    //xmin_=-5.;
+    //xmax_=5.;
+    varString_= theObject_ + "_caloStage1FinalDigis_"+ subColl_ +"_L1TEMULATION.obj.data_.l1t::L1Candidate.hwEta()";
+    cutString_= theObject_ + "_caloStage1FinalDigis_"+ subColl_ +"_L1TEMULATION.obj.data_.l1t::L1Candidate.hwPt()>10.";
+    // varString_= theObject_ + "_caloStage1FinalDigis__L1TEMULATION.obj.data_.l1t::L1Candidate.hwPhi()";
+    // varString_= theObject_ + "_caloStage1Digis__L1TEMULATION.obj.data_.l1t::L1Candidate.hwPt()";
+    // cutString_="l1tTauBXVector_caloStage1FinalDigis_isoTaus_L1TEMULATION.obj.@data_.size()<5";
 
     hname_= Distribution + "_L1Emu";
     h_ = new TH1F(hname_,hname_,nbins_,xmin_,xmax_);
@@ -93,7 +119,7 @@ private:
   float xmin_, xmax_;
   float ymin_, ymax_;
 
-  TString hname_, varString_, cutString_, theObject_;
+  TString hname_, varString_, cutString_, theObject_, subColl_;
   TH1F *h_;
 
 };
