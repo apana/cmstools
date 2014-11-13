@@ -13,17 +13,17 @@ from myPyRootMacros import prepPlot, SetStyle, GetHist, PrepLegend, DrawText
 dist="et"
 ## dist="eta"
 ## L1Obj        = "Tau"
-L1Obj        = "IsoTau"
+## L1Obj        = "IsoTau"
 ## L1Obj        = "NonIsolatedEG"
-## L1Obj        = "IsolatedEG"
+L1Obj        = "IsolatedEG"
 ## L1Obj        = "Muon"
 ## L1Obj        = "CenJet"
 ## L1Obj        = "ForJet"
-##L1Obj        = "SET"
-##L1Obj        = "SHT"
+## L1Obj        = "SET" ; dist="etTot_"
+## L1Obj        = "SHT" ; dist="etTot_"
 
-fileName1 = "SimL1Emulator_Stage1_PP.root";   label1 = "Old";  process1 = "_L1TEMULATION";  module1="l1ExtraLayer2_";
-fileName2 = "/afs/cern.ch/work/a/apana/L1Upgrade/Emulator/tau/test/CMSSW_7_2_0_pre8/src/L1Trigger/L1TCalorimeter/test/SimL1Emulator_Stage1_PP.root";              label2 = "New";  process2 = "_L1TEMULATION";  module2="l1ExtraLayer2_";
+fileName1 = "SimL1Emulator_Stage1_PP_a.root";   label1 = "Cfg";  process1 = "_L1TEMULATION";  module1="l1ExtraLayer2_";
+fileName2 = "SimL1Emulator_Stage1_PP_RCTLutsFromCondDB_ext.root";        label2 = "ConfDB";  process2 = "_L1TEMULATION";  module2="l1ExtraLayer2_";
 
 #===============================================================
 
@@ -57,6 +57,10 @@ class SetupHistos():
             xmax_=460; nbins_=100; rebin_=5;
         elif ( L1Object_ == "SET" or L1Object_ == "SHT"):
             self.l1coll="l1extraL1EtMissParticles_";
+            if L1Object_ == "SET":
+                self.l1obj="MET";
+            else:
+                self.l1obj="MHT";
             xmax_=1200; nbins_=100; rebin_=5;
         elif ( L1Object_ == "Muon"):
             self.l1coll="l1extraL1MuonParticles_";
@@ -103,6 +107,9 @@ if __name__ == '__main__':
 
     branch1=histos.l1coll+module1+histos.l1obj+process1+".obj."+dist+"()";   cut1="";
     branch2=histos.l1coll+module2+histos.l1obj+process2+".obj."+dist+"()";   cut2="";
+    if dist == "etTot_":
+        branch1=histos.l1coll+module1+histos.l1obj+process1+".obj."+dist;   cut1="";
+        branch2=histos.l1coll+module2+histos.l1obj+process2+".obj."+dist;   cut2="";
 
     ## branch2="l1extraL1JetParticles_l1ExtraLayer2_IsoTau_L1TEMULATION.obj.et()";
     print branch1
