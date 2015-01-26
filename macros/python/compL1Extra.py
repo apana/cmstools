@@ -13,17 +13,19 @@ from myPyRootMacros import prepPlot, SetStyle, GetHist, PrepLegend, DrawText
 dist="et"
 ## dist="eta"
 ## L1Obj        = "Tau"
-## L1Obj        = "IsoTau"
+L1Obj        = "IsoTau"
 ## L1Obj        = "NonIsolatedEG"
-L1Obj        = "IsolatedEG"
+## L1Obj        = "IsolatedEG"
 ## L1Obj        = "Muon"
 ## L1Obj        = "CenJet"
 ## L1Obj        = "ForJet"
-## L1Obj        = "SET" ; dist="etTot_"
-## L1Obj        = "SHT" ; dist="etTot_"
+## L1Obj        = "SET" ; dist="etTot_" ; dist="phi"
+## L1Obj        = "SHT" ; dist="etTot_"; dist="phi"
+## L1Obj        = "HFRings" ; dist="m_ringEtSums"; 
 
-fileName1 = "SimL1Emulator_Stage1_PP_a.root";   label1 = "Cfg";  process1 = "_L1TEMULATION";  module1="l1ExtraLayer2_";
-fileName2 = "SimL1Emulator_Stage1_PP_RCTLutsFromCondDB_ext.root";        label2 = "ConfDB";  process2 = "_L1TEMULATION";  module2="l1ExtraLayer2_";
+fileName1 = "L1Trigger/L1TCalorimeter/test/SimL1Emulator_Stage1_PP.root";   label1 = "740pre5";  process1 = "_L1TEMULATION";  module1="l1ExtraLayer2_";
+## fileName2 = "../../CMSSW_7_3_0_pre1/src/L1Trigger/L1TCalorimeter/test/SimL1Emulator_Stage1_PP.root";        label2 = "730pre1";  process2 = "_L1TEMULATION";  module2="l1ExtraLayer2_";
+fileName2 = "../../CMSSW_7_3_0_pre2/src/L1Trigger/L1TCalorimeter/test/SimL1Emulator_Stage1_PP.root";        label2 = "730pre2";  process2 = "_L1TEMULATION";  module2="l1ExtraLayer2_";
 
 #===============================================================
 
@@ -66,9 +68,16 @@ class SetupHistos():
             self.l1coll="l1extraL1MuonParticles_";
             self.l1obj="";
             xmax_=140; nbins_=140; rebin_=1;
+        elif ( L1Object_ == "HFRings"):
+            self.l1coll="l1extraL1HFRingss_";
+            self.l1obj="";
+            xmin_=20; xmax_=75; nbins_=55; rebin_=1;
 
         if ("eta"==Dist_):
-            xmin_=-5; xmax_=5; nbins_=20; self.logy=0;
+            xmin_=-5; xmax_=5; nbins_=20; self.logy=0; rebin_=1
+
+        if ("phi"==Dist_):
+            xmin_=-3.15; xmax_=3.15; nbins_=20; self.logy=0; rebin_=1
 
 
         hname1_= L1Object_ + "_1"; hname2_=L1Object_ +"_2";
@@ -107,7 +116,8 @@ if __name__ == '__main__':
 
     branch1=histos.l1coll+module1+histos.l1obj+process1+".obj."+dist+"()";   cut1="";
     branch2=histos.l1coll+module2+histos.l1obj+process2+".obj."+dist+"()";   cut2="";
-    if dist == "etTot_":
+    if dist == "etTot_" or dist == "m_ringEtSums":
+        print "XXXXXXXXXXXXXXXXX"
         branch1=histos.l1coll+module1+histos.l1obj+process1+".obj."+dist;   cut1="";
         branch2=histos.l1coll+module2+histos.l1obj+process2+".obj."+dist;   cut2="";
 
@@ -122,6 +132,9 @@ if __name__ == '__main__':
     if (histos.ymax > 0.):
         h1.GetYaxis().SetRangeUser(histos.ymin,histos.ymax);
         h2.GetYaxis().SetRangeUser(histos.ymin,histos.ymax);
+
+    print "h1: ",h1.GetEntries()
+    print "h2: ",h2.GetEntries()
 
     c1=prepPlot("c1","L1Extra")
     c1.SetLogy(histos.logy)
