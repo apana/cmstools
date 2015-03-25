@@ -1,4 +1,4 @@
-from ROOT import gROOT, gStyle, gSystem, TCanvas, TF1, TFile, TH1F, TColor, TLine, TLegend, TLatex, SetOwnership
+from ROOT import gROOT, gStyle, gSystem, TCanvas, TF1, TFile, TH1F, TColor, TLine, TLegend, TLatex, SetOwnership, TChain
 import sys,string,math,os,ROOT
 
 from PhysicsTools.PythonAnalysis import *
@@ -12,8 +12,8 @@ from myPyRootMacros import prepPlot, SetStyle, GetHist, PrepLegend, DrawText
 
 dist="et"
 ## dist="eta"
-## L1Obj        = "Tau"
-L1Obj        = "IsoTau"
+L1Obj        = "Tau"
+## L1Obj        = "IsoTau"
 ## L1Obj        = "NonIsolatedEG"
 ## L1Obj        = "IsolatedEG"
 ## L1Obj        = "Muon"
@@ -23,9 +23,13 @@ L1Obj        = "IsoTau"
 ## L1Obj        = "SHT" ; dist="etTot_"; dist="phi"
 ## L1Obj        = "HFRings" ; dist="m_ringEtSums"; 
 
-fileName1 = "L1Trigger/L1TCalorimeter/test/SimL1Emulator_Stage1_PP.root";   label1 = "740pre5";  process1 = "_L1TEMULATION";  module1="l1ExtraLayer2_";
-## fileName2 = "../../CMSSW_7_3_0_pre1/src/L1Trigger/L1TCalorimeter/test/SimL1Emulator_Stage1_PP.root";        label2 = "730pre1";  process2 = "_L1TEMULATION";  module2="l1ExtraLayer2_";
-fileName2 = "../../CMSSW_7_3_0_pre2/src/L1Trigger/L1TCalorimeter/test/SimL1Emulator_Stage1_PP.root";        label2 = "730pre2";  process2 = "_L1TEMULATION";  module2="l1ExtraLayer2_";
+label1 = "740pre6";  process1 = "_L1TEMULATION";  module1="l1ExtraLayer2_";
+fileNames1=["/afs/cern.ch/work/a/apana/L1DPG/debug/tmp/CMSSW_7_4_0_pre6/src/L1Trigger/L1TCalorimeter/test/SimL1Emulator_Stage1_PP.root"]
+
+label2 = "740pre8";  process2 = "_L1TEMULATION";  module2="l1ExtraLayer2_";
+fileNames2=["/afs/cern.ch/work/a/apana/L1DPG/debug/tmp/CMSSW_7_4_0_pre8/src/L1Trigger/L1TCalorimeter/test/SimL1Emulator_Stage1_PP_pre6GT.root"]
+
+Rebin=-1  ## used to overide default rebin value
 
 #===============================================================
 
@@ -45,7 +49,7 @@ class SetupHistos():
             else:
                 self.l1obj = L1Object_
             nbins_=64; xmin_=0.; xmax_=256.
-
+            rebin_=4;
         elif (L1Object_ == "NonIsolatedEG" or L1Object_ == "IsolatedEG"):
             self.l1coll="l1extraL1EmParticles_";
             if (L1Object_ == "NonIsolatedEG"):
@@ -74,11 +78,14 @@ class SetupHistos():
             xmin_=20; xmax_=75; nbins_=55; rebin_=1;
 
         if ("eta"==Dist_):
-            xmin_=-5; xmax_=5; nbins_=20; self.logy=0; rebin_=1
+            ## xmin_=-5; xmax_=5; nbins_=20; self.logy=0; rebin_=1
+            xmin_=0; xmax_=21; nbins_=21; self.logy=0; rebin_=1
 
         if ("phi"==Dist_):
             xmin_=-3.15; xmax_=3.15; nbins_=20; self.logy=0; rebin_=1
 
+
+        if Rebin > 0: rebin_=Rebin
 
         hname1_= L1Object_ + "_1"; hname2_=L1Object_ +"_2";
         h1_ = TH1F(hname1_,hname1_,nbins_,xmin_,xmax_);
@@ -107,10 +114,26 @@ if __name__ == '__main__':
 #===============================================================
 
 
-    print "\n",fileName1
-    print fileName2,"\n"
-    f1 = ROOT.TFile.Open(fileName1);  tree1=ROOT.gDirectory.Get("Events")
-    f2 = ROOT.TFile.Open(fileName2);  tree2=ROOT.gDirectory.Get("Events")
+    ## print "\n",fileName1
+    ## print fileName2,"\n"
+    ## f1 = ROOT.TFile.Open(fileName1);  tree1=ROOT.gDirectory.Get("Events")
+    ## f2 = ROOT.TFile.Open(fileName2);  tree2=ROOT.gDirectory.Get("Events")
+
+    tree1=TChain("Events");
+    i=0
+    for f in fileNames1:
+        i=i+1
+        print i,f
+        tree1.Add(f);
+
+    print "\n"
+
+    tree2=TChain("Events");
+    i=0
+    for f in fileNames2:
+        i=i+1
+        print i,f
+        tree2.Add(f)
 
     histos=SetupHistos(L1Obj,dist)
 
@@ -121,7 +144,6 @@ if __name__ == '__main__':
         branch1=histos.l1coll+module1+histos.l1obj+process1+".obj."+dist;   cut1="";
         branch2=histos.l1coll+module2+histos.l1obj+process2+".obj."+dist;   cut2="";
 
-    ## branch2="l1extraL1JetParticles_l1ExtraLayer2_IsoTau_L1TEMULATION.obj.et()";
     print branch1
     print branch2
 
@@ -135,6 +157,9 @@ if __name__ == '__main__':
 
     print "h1: ",h1.GetEntries()
     print "h2: ",h2.GetEntries()
+
+    # h1.Scale(1./h1.GetEntries())
+    # h2.Scale(1./h2.GetEntries())
 
     c1=prepPlot("c1","L1Extra")
     c1.SetLogy(histos.logy)
@@ -167,6 +192,22 @@ if __name__ == '__main__':
     tt2.SetY1NDC(y2-2*dy);   tt2.SetX1NDC(x2-dx);
     gPad.Modified();
     gPad.Update();
+
+    hRat= h2.Clone()
+    hRat.SetName("Ratio")
+    hRat.Divide(h2,h1,1.,1.,"");
+
+    cname="Ratio"
+    c2 = prepPlot("c2",cname,250,120,500,500)
+    c2.SetLogy(0);
+
+    min=0.5; max=1.5
+    hRat.SetMaximum(1.8)
+    hRat.SetMinimum(0.2)
+    hRat.Draw()
+
+    xl1=0.6; yl1=.3;
+    DrawText(xl1,yl1,label2+"/"+label1)
 
 #===============================================================
     if os.getenv("FROMGUI") == None:
