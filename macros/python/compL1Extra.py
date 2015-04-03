@@ -7,29 +7,33 @@ gSystem.Load("libFWCoreFWLite.so")
 AutoLibraryLoader.enable()
 
 sys.path.append(os.path.join(os.environ.get("HOME"),'rootmacros'))
-from myPyRootMacros import prepPlot, SetStyle, GetHist, PrepLegend, DrawText
+from myPyRootMacros import prepPlot, SetStyle, GetHist, PrepLegend, DrawText, prep1by2Plot, ResetAxisAndLabelSizes
 #===============================================================
 
 dist="et"
+## dist="phi"
 ## dist="eta"
-L1Obj        = "Tau"
+## L1Obj        = "Tau"
 ## L1Obj        = "IsoTau"
 ## L1Obj        = "NonIsolatedEG"
-## L1Obj        = "IsolatedEG"
+L1Obj        = "IsolatedEG"
 ## L1Obj        = "Muon"
 ## L1Obj        = "CenJet"
 ## L1Obj        = "ForJet"
-## L1Obj        = "SET" ; dist="etTot_" ; dist="phi"
-## L1Obj        = "SHT" ; dist="etTot_"; dist="phi"
+## L1Obj        = "SET" ; dist="etTot_" ; ## dist="phi"
+## L1Obj        = "SHT" ; dist="etTot_";
 ## L1Obj        = "HFRings" ; dist="m_ringEtSums"; 
 
-label1 = "740pre6";  process1 = "_L1TEMULATION";  module1="l1ExtraLayer2_";
-fileNames1=["/afs/cern.ch/work/a/apana/L1DPG/debug/tmp/CMSSW_7_4_0_pre6/src/L1Trigger/L1TCalorimeter/test/SimL1Emulator_Stage1_PP.root"]
+label1 = "PR8532";  process1 = "_L1TEMULATION";  module1="l1ExtraLayer2_";
+fileNames1=["SimL1Emulator_Stage1_PP.root"]
 
-label2 = "740pre8";  process2 = "_L1TEMULATION";  module2="l1ExtraLayer2_";
-fileNames2=["/afs/cern.ch/work/a/apana/L1DPG/debug/tmp/CMSSW_7_4_0_pre8/src/L1Trigger/L1TCalorimeter/test/SimL1Emulator_Stage1_PP_pre6GT.root"]
+label2 = "740pre9";  process2 = "_L1TEMULATION";  module2="l1ExtraLayer2_";
+fileNames2=["/afs/cern.ch/work/a/apana/L1Upgrade/Emulator/PR8532/Default/CMSSW_7_4_0_pre9/src/L1Trigger/L1TCalorimeter/test/SimL1Emulator_Stage1_PP.root"]
 
 Rebin=-1  ## used to overide default rebin value
+
+# PrintPlot=False
+PrintPlot=True
 
 #===============================================================
 
@@ -65,9 +69,14 @@ class SetupHistos():
             self.l1coll="l1extraL1EtMissParticles_";
             if L1Object_ == "SET":
                 self.l1obj="MET";
+                xmax_=1200; nbins_=120; rebin_=5;
+                if ("et"==Dist_):
+                    xmax_=500; nbins_=50; rebin_=2;
             else:
                 self.l1obj="MHT";
-            xmax_=1200; nbins_=100; rebin_=5;
+                xmax_=1.; nbins_=100; rebin_=5;
+                if ("etTot_" == Dist_):
+                    xmax_=1200; nbins_=120; rebin_=5;
         elif ( L1Object_ == "Muon"):
             self.l1coll="l1extraL1MuonParticles_";
             self.l1obj="";
@@ -75,7 +84,7 @@ class SetupHistos():
         elif ( L1Object_ == "HFRings"):
             self.l1coll="l1extraL1HFRingss_";
             self.l1obj="";
-            xmin_=20; xmax_=75; nbins_=55; rebin_=1;
+            xmin_=0; xmax_=50; nbins_=50; rebin_=1;
 
         if ("eta"==Dist_):
             ## xmin_=-5; xmax_=5; nbins_=20; self.logy=0; rebin_=1
@@ -161,8 +170,15 @@ if __name__ == '__main__':
     # h1.Scale(1./h1.GetEntries())
     # h2.Scale(1./h2.GetEntries())
 
-    c1=prepPlot("c1","L1Extra")
-    c1.SetLogy(histos.logy)
+    ## c1=prepPlot("c1","L1Extra")
+    ## c1.SetLogy(histos.logy)
+    c1,p1,p2 = prep1by2Plot("c1","L1Extra",500)
+    p1.Draw(); p2.Draw()
+
+    p1.cd()
+    p1.SetLogy(histos.logy)
+
+    h1.SetLabelOffset(0.1, "X");
     ## h2.Scale(0.5)
     h1.Draw()
     h2.Draw("sames")
@@ -197,9 +213,12 @@ if __name__ == '__main__':
     hRat.SetName("Ratio")
     hRat.Divide(h2,h1,1.,1.,"");
 
+    hRat.SetStats(0)
+    ResetAxisAndLabelSizes(hRat,0.065,0.01)
     cname="Ratio"
-    c2 = prepPlot("c2",cname,250,120,500,500)
-    c2.SetLogy(0);
+    ## c2 = prepPlot("c2",cname,250,120,500,500)
+    ## c2.SetLogy(0);
+    p2.cd()
 
     min=0.5; max=1.5
     hRat.SetMaximum(1.8)
@@ -207,7 +226,13 @@ if __name__ == '__main__':
     hRat.Draw()
 
     xl1=0.6; yl1=.3;
-    DrawText(xl1,yl1,label2+"/"+label1)
+    DrawText(xl1,yl1,label2+"/"+label1,0.075)
+
+    gPad.Update();
+
+    if (PrintPlot):
+        psname="comp_" + L1Obj + "_" + dist
+        c1.Print(psname + ".gif")
 
 #===============================================================
     if os.getenv("FROMGUI") == None:
