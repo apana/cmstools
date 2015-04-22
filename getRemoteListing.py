@@ -2,8 +2,8 @@
 #
 import sys,string,math,os,subprocess
 
-Debug=False
-PrintOnlyRootFiles=True
+Debug=True
+PrintOnlyRootFiles=False
 ShowFileSize=True
 
 # remoteDir="srm://stormfe1.pi.infn.it:8444/srm/managerv2?SFN=/cms/store/user/arizzi/Step1V33_Step2_finalData"
@@ -12,7 +12,9 @@ ShowFileSize=True
 # remoteDir="srm://stormfe1.pi.infn.it:8444/srm/managerv2?SFN=/cms/store/user/arizzi/Ntuple_Step1V42_Step2Tag_EDMV42_Step2_V4_DataMoreStat"
 # remoteDir="srm://stormfe1.pi.infn.it:8444/srm/managerv2?SFN=/cms/store/user/arizzi/Ntuple_Step1V42_Step2Tag_EDMV42_Step2_V4a_MC"
 
-remoteDir="srm://stormfe1.pi.infn.it:8444/srm/managerv2?SFN=/cms/store/user/arizzi/Ntuple_Step1V42_Step2Tag_EDMV42_Step2_V6_MC"
+# remoteDir="srm://stormfe1.pi.infn.it:8444/srm/managerv2?SFN=/cms/store/user/arizzi/Ntuple_Step1V42_Step2Tag_EDMV42_Step2_V6_MC"
+
+remoteDir="srm://dcache-se-desy.desy.de:8443/srm/managerv2?SFN=/nfs"
 
 if __name__ == '__main__':
 

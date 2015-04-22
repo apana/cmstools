@@ -32,4 +32,4 @@ echo " Setting up $vers"
 echo "*************************"
 echo
 
-source /uscmst1/prod/grid/"$vers"/crab.csh
+source /cvmfs/cms.cern.ch/crab/crab.csh
