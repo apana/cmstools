@@ -10,30 +10,16 @@ sys.path.append(os.path.join(os.environ.get("HOME"),'rootmacros'))
 from myPyRootMacros import prepPlot, SetStyle, GetHist, PrepLegend, DrawText, prep1by2Plot, ResetAxisAndLabelSizes
 #===============================================================
 
-dist="et"
-## dist="phi"
-## dist="eta"
-## L1Obj        = "Tau"
-## L1Obj        = "IsoTau"
-## L1Obj        = "NonIsolatedEG"
-L1Obj        = "IsolatedEG"
-## L1Obj        = "Muon"
-## L1Obj        = "CenJet"
-## L1Obj        = "ForJet"
-## L1Obj        = "SET" ; dist="etTot_" ; ## dist="phi"
-## L1Obj        = "SHT" ; dist="etTot_";
-## L1Obj        = "HFRings" ; dist="m_ringEtSums"; 
+label1 = "750pre1";  process1 = "_L1TEMULATION";  module1="l1ExtraLayer2_";
+fileNames1=["SimL1Emulator_Stage1_PP_Default.root"]
 
-label1 = "PR8532";  process1 = "_L1TEMULATION";  module1="l1ExtraLayer2_";
-fileNames1=["SimL1Emulator_Stage1_PP.root"]
-
-label2 = "740pre9";  process2 = "_L1TEMULATION";  module2="l1ExtraLayer2_";
-fileNames2=["/afs/cern.ch/work/a/apana/L1Upgrade/Emulator/PR8532/Default/CMSSW_7_4_0_pre9/src/L1Trigger/L1TCalorimeter/test/SimL1Emulator_Stage1_PP.root"]
+label2 = "740";  process2 = "_L1TEMULATION";  module2="l1ExtraLayer2_";
+fileNames2=["/afs/cern.ch/user/a/apana/work/L1Upgrade/Emulator/Validate/CMSSW_7_4_0_pre8/src/L1Trigger/L1TCalorimeter/test/SimL1Emulator_Stage1_PP.root"]
 
 Rebin=-1  ## used to overide default rebin value
 
-# PrintPlot=False
-PrintPlot=True
+PrintPlot=False
+# PrintPlot=True
 
 #===============================================================
 
@@ -87,8 +73,8 @@ class SetupHistos():
             xmin_=0; xmax_=50; nbins_=50; rebin_=1;
 
         if ("eta"==Dist_):
-            ## xmin_=-5; xmax_=5; nbins_=20; self.logy=0; rebin_=1
-            xmin_=0; xmax_=21; nbins_=21; self.logy=0; rebin_=1
+            xmin_=-5; xmax_=5; nbins_=20; self.logy=0; rebin_=1
+            ## xmin_=0; xmax_=21; nbins_=21; self.logy=0; rebin_=1
 
         if ("phi"==Dist_):
             xmin_=-3.15; xmax_=3.15; nbins_=20; self.logy=0; rebin_=1
@@ -116,17 +102,7 @@ class HistAttr:
         self.xmin  = xmin_
         self.xmax  = xmax_
 
-if __name__ == '__main__':
-
-    SetStyle()
-    gStyle.SetOptStat(110);
-#===============================================================
-
-
-    ## print "\n",fileName1
-    ## print fileName2,"\n"
-    ## f1 = ROOT.TFile.Open(fileName1);  tree1=ROOT.gDirectory.Get("Events")
-    ## f2 = ROOT.TFile.Open(fileName2);  tree2=ROOT.gDirectory.Get("Events")
+def CompL1Extra(L1Obj="xxx",dist="xxx"):
 
     tree1=TChain("Events");
     i=0
@@ -179,7 +155,7 @@ if __name__ == '__main__':
     p1.SetLogy(histos.logy)
 
     h1.SetLabelOffset(0.1, "X");
-    ## h2.Scale(0.5)
+    ## h2.Scale(0.9)
     h1.Draw()
     h2.Draw("sames")
 
@@ -189,13 +165,16 @@ if __name__ == '__main__':
     leg0.AddEntry(h2,label2,"pl")
     leg0.Draw();
 
-    DrawText(0.6,0.8,L1Obj,0.04)
+    DrawText(0.6,0.7,L1Obj,0.04)
     gPad.Update();
-    print h1.GetListOfFunctions()
-    print h1.GetListOfFunctions().FindObject("stats")
-    tt1=h1.GetFunction("stats");
+    # print h1.GetListOfFunctions()
+    # print h1.GetListOfFunctions().FindObject("stats")
+    # print h1.FindObject("stats")
+    ## tt1=h1.GetFunction("stats");
+    tt1=h1.FindObject("stats");
     tt1.SetTextColor(h1.GetLineColor());
-    tt2=h2.GetFunction("stats");
+    ## tt2=h2.GetFunction("stats");
+    tt2=h2.FindObject("stats");
     tt2.SetTextColor(h2.GetLineColor());
     x1 = tt1.GetX1NDC();    y1 = tt1.GetY1NDC();
     x2 = tt1.GetX2NDC();    y2 = tt1.GetY2NDC();
@@ -211,10 +190,13 @@ if __name__ == '__main__':
 
     hRat= h2.Clone()
     hRat.SetName("Ratio")
+    hRat.GetXaxis().SetTitle(dist);
+
     hRat.Divide(h2,h1,1.,1.,"");
 
     hRat.SetStats(0)
-    ResetAxisAndLabelSizes(hRat,0.065,0.01)
+    ResetAxisAndLabelSizes(hRat,0.07,0.01)
+    hRat.SetTitleSize( 0.1, "X" ); hRat.SetTitleOffset(0.8, "X");
     cname="Ratio"
     ## c2 = prepPlot("c2",cname,250,120,500,500)
     ## c2.SetLogy(0);
@@ -234,7 +216,42 @@ if __name__ == '__main__':
         psname="comp_" + L1Obj + "_" + dist
         c1.Print(psname + ".gif")
 
+
 #===============================================================
     if os.getenv("FROMGUI") == None:
         print "Not from GUI"
-        raw_input('\npress return to end the program...')
+        ans=raw_input('\npress return to continue, \"e\" to exit...')
+        # print "ans= ",ans
+        if len(ans)>0:
+            return 1
+
+
+    return 0
+
+if __name__ == '__main__':
+
+    SetStyle()
+    gStyle.SetOptStat(110);
+
+    L1Objs=["NonIsolatedEG","IsolatedEG","CenJet","ForJet","Tau","IsoTau","SET","SHT","HFRings"]
+    # L1Objs=["NonIsolatedEG","IsolatedEG","CenJet","ForJet","Tau","IsoTau"]
+    # L1Objs=["SET","SHT","HFRings"]
+
+    for L1Obj in L1Objs:
+        dist="et"
+        # dist="eta"
+        # dist="phi"
+        if "et"==dist and (L1Obj=="SET" or L1Obj=="SHT"):
+            dist="etTot_"
+        elif "et"==dist and L1Obj=="HFRings": 
+            dist="m_ringEtSums"
+        elif "eta"==dist and (L1Obj=="SET" or L1Obj=="SHT" or L1Obj=="HFRings" or L1Obj=="MET" or L1Obj=="MHT"):
+            continue
+        elif ("eta"==dist or "phi"==dist) and L1Obj=="HFRings":
+            continue
+
+        print "Comparing ",L1Obj,dist
+        go=CompL1Extra(L1Obj,dist)
+        if go == 1:
+            break
+
