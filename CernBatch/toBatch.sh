@@ -54,9 +54,12 @@ eval `scramv1 runtime -sh`
 #echo
 #cat $cfg
 #echo --------------- End of Configuation File ---------------------------
-cd -
+## cd -
 echo "Current directory $PWD"
-cmsRun -p $cfg
+# echo cmsRun $cfg globalTag=GR_E_V43::All
+# cmsRun $cfg globalTag=GR_E_V43::All
+cmsRun $cfg
+## root -b -q run.C
 echo ""
 echo "Directory listing:"
 ls -xs 
@@ -70,6 +73,12 @@ then
      rfcp $file ${outputCastorDir}
      rm $file
    done
+## else
+##    for file in *.root
+##    do
+##        cp $file $PWD
+##        rm $file
+##    done
 fi
 
 echo
