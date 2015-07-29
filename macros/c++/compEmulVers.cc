@@ -33,11 +33,11 @@ void compEmulVers(){
  gStyle->SetOptTitle(0);
  gROOT->ForceStyle();
 
- TString rootname1 = "L1Trigger/L1TCalorimeter/test/SimL1Emulator_Stage1_PP.root";
- TString rootname2 = "../../CMSSW_7_2_0_pre6/src/L1Trigger/L1TCalorimeter/test/SimL1Emulator_Stage1_PP.root";
+ TString rootname1 = "SimL1Emulator_Stage1_PP_org.root";
+ TString rootname2 = "SimL1Emulator_Stage1_PP_new.root";
 
- TString Vers1 ="720pre7";
- TString Vers2 ="HLT0";
+ TString Vers1 ="OLD";
+ TString Vers2 ="NEW";
 
  TFile* root1= OpenRootFile(rootname1); if (!root1) return;
  TFile* root2= OpenRootFile(rootname2); if (!root2) return;
@@ -55,73 +55,82 @@ void compEmulVers(){
    return;
  }
 
- bool plotCentralJets=false;
- bool plotForwardJets=false;
+ // initialization
+ TString Cut(""), Var("XXX");
+ int nbins(100), rebin(1);
+ float min(0.),max(1000.),ymin(0.9),ymax(-600000.);
 
+ // string myVar        = "IsolatedEG";
+ // string myVar        = "RelaxedEG";
+ // string myVar        = "RelaxedTau";
+ // string myVar        = "IsolatedTau";
+ string myVar        = "Jet";
 
- TString Cut        = "", Itype = "", Iso="<2";
- // TString myVar        = "RelaxedEG";
- TString myVar        = "IsolatedEG";
- if (myVar == "IsolatedEG") Iso = "==1";
+ if (myVar == "IsolatedEG" || myVar == "RelaxedEG"){
 
- TString Var     = "l1tEGammaBXVector_caloStage1FinalDigis__L1TEMULATION.obj.data_.l1t::L1Candidate.et()";
- // TString Var     = "l1tEGammaBXVector_caloStage1FinalDigis__L1TEMULATION.obj.data_.l1t::L1Candidate.hwPt()";
- TString Cut     = "l1tEGammaBXVector_caloStage1FinalDigis__L1TEMULATION.obj.data_.l1t::L1Candidate.hwIso()" + Iso;
+   TString Iso("-999");
+   if (myVar == "IsolatedEG") Iso = "==1";
 
+   Var     = "l1tEGammaBXVector_simCaloStage1FinalDigis__L1TEMULATION.obj.data_.l1t::L1Candidate.et()";
+   // Var     = "l1tEGammaBXVector_simCaloStage1FinalDigis__L1TEMULATION.obj.data_.l1t::L1Candidate.hwPt()";
+   Cut     = "l1tEGammaBXVector_simCaloStage1FinalDigis__L1TEMULATION.obj.data_.l1t::L1Candidate.hwIso()" + Iso;
 
- int nbins=64;
- float min=0., max=64;
- float ymin=0.9, ymax=-600000.;
+   nbins=64;
+   min=0., max=64;
 
- int rebin=1;
-
- // *************  MET and friends  *************************** //
- // myVar        = "MET"; Itype = "2"; max=400; ymax=500.;
- myVar        = "MHT"; Itype = "3"; max=460; ymax=500.;
- // myVar        = "SET"; Itype = "0"; max=1000; ymax=500.;
- // myVar        = "SHT"; Itype = "1"; max=1500; ymax=500.;
+   rebin=1;
+ }else if (myVar == "MET" || myVar == "MHT" || myVar == "SET" || myVar == "SHT"){
+   // *************  MET and friends  *************************** //
+   TString Itype("-999");
+   if (myVar == "MET"){
+     Itype = "2"; max=400; ymax=500.;
+   }else if (myVar == "MHT"){
+     Itype = "3"; max=460; ymax=500.;
+   }else if (myVar == "SET"){
+     Itype = "0"; max=1000; ymax=500.;
+   }else if (myVar == "SHT"){
+     Itype = "1"; max=1500; ymax=500.;
+   }
  
- // Var     = "l1tEtSumBXVector_caloStage1FinalDigis__L1TEMULATION.obj.data_.l1t::L1Candidate.et()";
- // Cut = "l1tEtSumBXVector_caloStage1FinalDigis__L1TEMULATION.obj.data_.type_==" + Itype;
-
- Var     = "l1tEtSumBXVector_caloStage1Digis__L1TEMULATION.obj.data_.l1t::L1Candidate.hwPt()";
- Cut = "l1tEtSumBXVector_caloStage1Digis__L1TEMULATION.obj.data_.type_==" + Itype;
+   // Var     = "l1tEtSumBXVector_simCaloStage1FinalDigis__L1TEMULATION.obj.data_.l1t::L1Candidate.et()";
+   // Cut = "l1tEtSumBXVector_simCaloStage1FinalDigis__L1TEMULATION.obj.data_.type_==" + Itype;
  
- nbins=100;
- int rebin=5;
- float min=-0;
- float ymin=1.;
+   Var     = "l1tEtSumBXVector_simCaloStage1Digis__L1TEMULATION.obj.data_.l1t::L1Candidate.hwPt()";
+   Cut = "l1tEtSumBXVector_simCaloStage1Digis__L1TEMULATION.obj.data_.type_==" + Itype;
+ 
+   nbins=100;
+   rebin=5;
+   min=-0;
+   ymin=1.;
 
- // myVar="Jet";
- // Var     = "l1tJetBXVector_caloStage1FinalDigis__L1TEMULATION.obj.data_.l1t::L1Candidate.et()";
- // Cut     = "";
- // nbins=256;
- // rebin=8;
- // float min=-0, max=256;
- // float ymin=0.1, ymax=5500.;
+ }else if (myVar == "Jet"){
 
+   Var     = "l1tJetBXVector_simCaloStage1FinalDigis__L1TEMULATION.obj.data_.l1t::L1Candidate.et()";
+   Cut     = "";
+   nbins=256;
+   rebin=8;
+   min=-0, max=256;
+   ymin=0.1, ymax=5500.;
 
- // myVar        = "RelaxedTau";
- // // myVar        = "IsolatedTau";
- // Var     = "l1tTauBXVector_caloStage1FinalDigis__L1TEMULATION.obj.data_.l1t::L1Candidate.et()";
- // // Var     = "l1tTauBXVector_caloStage1FinalDigis__L1TEMULATION.obj.data_.l1t::L1Candidate.hwPt()";
- // if (myVar == "RelaxedTau"){
- //   // Cut = "l1tTauBXVector_caloStage1FinalDigis__L1TEMULATION.obj.data_.l1t::L1Candidate.hwIso()==0";
- //   Cut="";
- // }else{
- //   Cut = "l1tTauBXVector_caloStage1FinalDigis__L1TEMULATION.obj.data_.l1t::L1Candidate.hwIso()==1";
- // }
- // 
- // nbins=256;
- // int rebin=8;
- // float min=-0, max=256;
- // float ymin=0.1, ymax=5500.;
+ }else if (myVar == "RelaxedTau" || myVar == "IsolatedTau"){
+   Cut="";
+   TString TauColl("isoTaus");
+   if (myVar == "RelaxedTau") TauColl="rlxTaus";
 
+   // Var     = "l1tTauBXVector_simCaloStage1FinalDigis_"+TauColl+"_L1TEMULATION.obj.data_.l1t::L1Candidate.hwPt()";
+   Var     = "l1tTauBXVector_simCaloStage1FinalDigis_"+TauColl+"_L1TEMULATION.obj.data_.l1t::L1Candidate.et()"; 
+   nbins=256;
+   rebin=8;
+   min=-0, max=256;
+   ymin=0.1, ymax=5500.;
+ }
 
  //rootUCT->GetListOfKeys()->Print();
  
+ cout << "\nRootFile1: " << rootname1 << std::endl;
+ cout << "RootFile2: " << rootname2 << std::endl;
 
- cout << "Var: " << Var << endl;
+ cout << "\nVar: " << Var << endl;
  cout << "Cut: " << Cut << endl;
 
  string hname1= myVar + "_1", hname2=myVar +"_2";
@@ -142,7 +151,7 @@ void compEmulVers(){
  h1->Rebin(rebin);
  h2->Rebin(rebin);
  h1->Draw();
- h2->Scale(0.8);
+ // h2->Scale(0.8);
  h2->Draw("sames");
  // h2->Draw();
 
@@ -191,7 +200,7 @@ void compEmulVers(){
   t->SetTextAlign(txtalign);
   //t->SetTextFont(txtfnt);
   //t->SetTextSizePixels(txtsize);
-  t->DrawLatex(xtxt,ytxt,myVar);
+  t->DrawLatex(xtxt,ytxt,myVar.c_str());
   t->DrawLatex(xtxt,ytxt-0.05,"Fully Corrected");
   // t->DrawLatex(xtxt,ytxt-0.05,"No PileUp");
   //t->DrawLatex(xtxt,ytxt-2*0.05,"No JEC");
