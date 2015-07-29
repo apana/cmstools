@@ -155,7 +155,7 @@ void compEmulVers(){
  h2->Draw("sames");
  // h2->Draw();
 
- Double_t xl1=.16, yl1=0.16, xl2=xl1+.3, yl2=yl1+.125;
+ Double_t xl1=.26, yl1=0.16, xl2=xl1+.3, yl2=yl1+.125;
  TLegend *leg = new TLegend(xl1,yl1,xl2,yl2);
  leg->AddEntry(h2,Vers2,"pl");
  leg->AddEntry(h1,Vers1,"pl");   // h1 and h2 are histogram pointers
@@ -201,7 +201,7 @@ void compEmulVers(){
   //t->SetTextFont(txtfnt);
   //t->SetTextSizePixels(txtsize);
   t->DrawLatex(xtxt,ytxt,myVar.c_str());
-  t->DrawLatex(xtxt,ytxt-0.05,"Fully Corrected");
+  // t->DrawLatex(xtxt,ytxt-0.05,"Fully Corrected");
   // t->DrawLatex(xtxt,ytxt-0.05,"No PileUp");
   //t->DrawLatex(xtxt,ytxt-2*0.05,"No JEC");
 
@@ -209,10 +209,11 @@ void compEmulVers(){
 
   //gROOT->Reset();
 
-  bool writeIt=false;
+  // bool writeIt=false;
+  bool writeIt=true;
   if (writeIt){
-    TString outname="comp_"+Var+".gif";
+    string outname="comp_"+myVar+".gif";
     cout << "Saving canvas to: " << outname << endl;
-    c1->Print(outname);
+    c1->Print(outname.c_str());
   }
 }
