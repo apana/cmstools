@@ -94,7 +94,7 @@ class DASOptionParser:
         msg  = "number of returned results (default is 10),"
         msg += " use --limit=0 to show all results"
         self.parser.add_option("--limit", action="store", type="int", 
-                               default=10, dest="limit", help=msg)
+                               default=0, dest="limit", help=msg)
         msg  = 'specify return data format (json or plain), default plain.'
         self.parser.add_option("--format", action="store", type="string",
                                default="plain", dest="format", help=msg)
