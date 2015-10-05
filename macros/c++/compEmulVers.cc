@@ -33,12 +33,11 @@ void compEmulVers(){
  gStyle->SetOptTitle(0);
  gROOT->ForceStyle();
 
- TString rootname1 = "SimL1Emulator_Stage1_PP_fwv3_hffix.root";
- TString rootname2 = "/afs/cern.ch/work/a/apana/L1Upgrade/Emulator/Validate/CMSSW_7_4_0_pre8/src/L1Trigger/L1TCalorimeter/test/SimL1Emulator_Stage1_PP_CMSSW_7_4_0_pre6_RelValTTbar_13.root";
- rootname2="/afs/cern.ch/work/a/apana/L1Upgrade/Emulator/Validate/CMSSW_7_4_0/src/L1Trigger/L1TCalorimeter/test/SimL1Emulator_Stage1_PP_newnew.root";
- // rootname2 = "SimL1Emulator_Stage1_PP_fwv3_rct.root";
- TString Vers1 ="750pre5 proposed";
- TString Vers2 ="740 Default";
+ TString rootname1 = "SimL1Emulator_Stage1_PP_org.root";
+ TString rootname2 = "SimL1Emulator_Stage1_PP_new.root";
+
+ TString Vers1 ="OLD";
+ TString Vers2 ="NEW";
 
  TFile* root1= OpenRootFile(rootname1); if (!root1) return;
  TFile* root2= OpenRootFile(rootname2); if (!root2) return;
@@ -56,86 +55,82 @@ void compEmulVers(){
    return;
  }
 
- bool plotCentralJets=false;
- bool plotForwardJets=false;
+ // initialization
+ TString Cut(""), Var("XXX");
+ int nbins(100), rebin(1);
+ float min(0.),max(1000.),ymin(0.9),ymax(-600000.);
 
-
- TString Cut        = "", Itype = "", Iso="<2";
+ // string myVar        = "IsolatedEG";
  // string myVar        = "RelaxedEG";
- string myVar        = "IsolatedEG";
- if (myVar == "IsolatedEG") Iso = "==1";
+ // string myVar        = "RelaxedTau";
+ // string myVar        = "IsolatedTau";
+ string myVar        = "Jet";
 
- TString Var     = "l1tEGammaBXVector_simCaloStage1FinalDigis__L1TEMULATION.obj.data_.l1t::L1Candidate.et()";
- // TString Var     = "l1tEGammaBXVector_simCaloStage1FinalDigis__L1TEMULATION.obj.data_.l1t::L1Candidate.hwPt()";
- Cut     = "l1tEGammaBXVector_simCaloStage1FinalDigis__L1TEMULATION.obj.data_.l1t::L1Candidate.hwIso()" + Iso;
+ if (myVar == "IsolatedEG" || myVar == "RelaxedEG"){
 
+   TString Iso("-999");
+   if (myVar == "IsolatedEG") Iso = "==1";
 
- int nbins=64;
- float min=0., max=64;
- float ymin=0.9, ymax=-600000.;
+   Var     = "l1tEGammaBXVector_simCaloStage1FinalDigis__L1TEMULATION.obj.data_.l1t::L1Candidate.et()";
+   // Var     = "l1tEGammaBXVector_simCaloStage1FinalDigis__L1TEMULATION.obj.data_.l1t::L1Candidate.hwPt()";
+   Cut     = "l1tEGammaBXVector_simCaloStage1FinalDigis__L1TEMULATION.obj.data_.l1t::L1Candidate.hwIso()" + Iso;
 
- int rebin=1;
+   nbins=64;
+   min=0., max=64;
 
-// *************  MET and friends  *************************** //
-// myVar        = "MET"; Itype = "2"; max=400; ymax=500.;
-myVar        = "MHT"; Itype = "3"; max=128; ymax=500.;
-// myVar        = "SET"; Itype = "0"; max=1000; ymax=500.;
-// myVar        = "SHT"; Itype = "1"; max=1500; ymax=500.;
+   rebin=1;
+ }else if (myVar == "MET" || myVar == "MHT" || myVar == "SET" || myVar == "SHT"){
+   // *************  MET and friends  *************************** //
+   TString Itype("-999");
+   if (myVar == "MET"){
+     Itype = "2"; max=400; ymax=500.;
+   }else if (myVar == "MHT"){
+     Itype = "3"; max=460; ymax=500.;
+   }else if (myVar == "SET"){
+     Itype = "0"; max=1000; ymax=500.;
+   }else if (myVar == "SHT"){
+     Itype = "1"; max=1500; ymax=500.;
+   }
+ 
+   // Var     = "l1tEtSumBXVector_simCaloStage1FinalDigis__L1TEMULATION.obj.data_.l1t::L1Candidate.et()";
+   // Cut = "l1tEtSumBXVector_simCaloStage1FinalDigis__L1TEMULATION.obj.data_.type_==" + Itype;
+ 
+   Var     = "l1tEtSumBXVector_simCaloStage1Digis__L1TEMULATION.obj.data_.l1t::L1Candidate.hwPt()";
+   Cut = "l1tEtSumBXVector_simCaloStage1Digis__L1TEMULATION.obj.data_.type_==" + Itype;
+ 
+   nbins=100;
+   rebin=5;
+   min=-0;
+   ymin=1.;
 
-// Var     = "l1tEtSumBXVector_simCaloStage1FinalDigis__L1TEMULATION.obj.data_.l1t::L1Candidate.et()";
-// Cut = "l1tEtSumBXVector_simCaloStage1FinalDigis__L1TEMULATION.obj.data_.type_==" + Itype;
+ }else if (myVar == "Jet"){
 
-Var     = "l1tEtSumBXVector_simCaloStage1Digis__L1TEMULATION.obj.data_.l1t::L1Candidate.hwPt()";
-Cut = "l1tEtSumBXVector_simCaloStage1Digis__L1TEMULATION.obj.data_.type_==" + Itype;
+   Var     = "l1tJetBXVector_simCaloStage1FinalDigis__L1TEMULATION.obj.data_.l1t::L1Candidate.et()";
+   Cut     = "";
+   nbins=256;
+   rebin=8;
+   min=-0, max=256;
+   ymin=0.1, ymax=5500.;
 
-nbins=100;
-rebin=4;
-if (myVar == "MHT"){  
-  nbins=128;
-  rebin=1;
-  min=-0;
-  ymin=1.;
-}
+ }else if (myVar == "RelaxedTau" || myVar == "IsolatedTau"){
+   Cut="";
+   TString TauColl("isoTaus");
+   if (myVar == "RelaxedTau") TauColl="rlxTaus";
 
-//  myVar="Jet";
-//  Var     = "l1tJetBXVector_simCaloStage1FinalDigis__L1TEMULATION.obj.data_.l1t::L1Candidate.et()";
-//  // Var     = "l1tJetBXVector_simCaloStage1Digis__L1TEMULATION.obj.data_.l1t::L1Candidate.hwPt()";
-//  Cut     = "";
-//  nbins=64;
-//  rebin=1;
-//  min=-0, max=256;
-//  ymin=0.1, ymax=5500.;
-//  if (Var.Contains("hwPt")) {
-//    std::cout << "found!" << '\n';
-//    max=64, rebin=1;
-//  }
-
-
-//  myVar        = "RelaxedTau";
-//  // myVar        = "IsolatedTau";
-//  Var     = "l1tTauBXVector_simCaloStage1Digis_isoTaus_L1TEMULATION.obj.data_.l1t::L1Candidate.hwPt()";
-//  // Var     = "l1tTauBXVector_simCaloStage1FinalDigis__L1TEMULATION.obj.data_.l1t::L1Candidate.hwPt()";
-//  if (myVar == "RelaxedTau"){
-//    Var     = "l1tTauBXVector_simCaloStage1Digis_rlxTaus_L1TEMULATION.obj.data_.l1t::L1Candidate.hwPt()";
-//    // Cut = "l1tTauBXVector_simCaloStage1FinalDigis__L1TEMULATION.obj.data_.l1t::L1Candidate.hwIso()==0";
-//    Cut="";
-//  }else{
-//    Cut = "l1tTauBXVector_simCaloStage1FinalDigis__L1TEMULATION.obj.data_.l1t::L1Candidate.hwIso()==1";
-//  }
-//  Cut="";
-//  nbins=256;
-//  rebin=8;
-//  min=-0, max=256;
-//  ymin=0.1, ymax=5500.;
-//  if (Var.Contains("hwPt")) {
-//    std::cout << "found!" << '\n';
-//    nbins=64, max=64, rebin=1;
-//  }
+   // Var     = "l1tTauBXVector_simCaloStage1FinalDigis_"+TauColl+"_L1TEMULATION.obj.data_.l1t::L1Candidate.hwPt()";
+   Var     = "l1tTauBXVector_simCaloStage1FinalDigis_"+TauColl+"_L1TEMULATION.obj.data_.l1t::L1Candidate.et()"; 
+   nbins=256;
+   rebin=8;
+   min=-0, max=256;
+   ymin=0.1, ymax=5500.;
+ }
 
  //rootUCT->GetListOfKeys()->Print();
  
+ cout << "\nRootFile1: " << rootname1 << std::endl;
+ cout << "RootFile2: " << rootname2 << std::endl;
 
- cout << "Var: " << Var << endl;
+ cout << "\nVar: " << Var << endl;
  cout << "Cut: " << Cut << endl;
 
  string hname1= myVar + "_1", hname2=myVar +"_2";
