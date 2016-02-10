@@ -1,3 +1,4 @@
+import ROOT
 from ROOT import gROOT, gStyle, gSystem, TCanvas, TF1, TFile, TH1F
 from ROOT import TColor, TLine, TLegend, TLatex, TObjArray
 from ROOT import SetOwnership
@@ -8,7 +9,7 @@ import sys,string,math,os
 
 # import myPyRootSettings
 sys.path.append(os.path.join(os.environ.get("HOME"),'rootmacros'))
-from myPyRootSettings import prepPlot
+from myPyRootMacros import prepPlot
 
 if __name__ == '__main__':
 
@@ -27,25 +28,25 @@ if __name__ == '__main__':
 
     RootDir="."
 
-    ptmin=40; ptmax=50;
+    ptmin=0; ptmax=254;
     # ptmin=80; ptmax=100;
     # ptmin=200; ptmax=250;
 
-    # WhichJEC="oldJEC"
-    WhichJEC="newJEC"
-
-    HistFile1="JetRespVsEta_pt" + str(int(ptmin)) + "-" +str(int(ptmax))+"_oldJEC.root"
-    HistFile2="JetRespVsEta_pt" + str(int(ptmin)) + "-" +str(int(ptmax))+"_newJEC.root"
+    HistFile1="triggerEff_257487_HLTPhysicsDS_HLT_ZeroBias_v2_pfjet_JECv3_cleaned_yall.root"
+    HistFile2="triggerEff_256675_HLTPhysicsDS_HLT_ZeroBias_v2_pfjet_JECv3_cleaned_ally.root"
 
     f1 = TFile(HistFile1)
     f2 = TFile(HistFile2)
     # f1.ls()
     # f1.cd("pf")
 
-    hname="Response"
+    hname="hL1CenJetPt"
     hNum = f1.Get(hname)
     hDen = f2.Get(hname)
 
+    hNum.Scale(1./hNum.GetEntries())
+    hDen.Scale(1./hDen.GetEntries())
+    
     hRat= hNum.Clone()
     hRat.SetName("Ratio")
     hRat.Divide(hNum,hDen,1.,1.,"");
@@ -64,14 +65,13 @@ if __name__ == '__main__':
     hDen.Draw("same")
 
     cname="Ratio"
-    c2 = prepPlot("c2",cname,750,120,500,500)
+    c2 = prepPlot("c2",cname,950,120,500,500)
     c2.SetLogy(0);    
 
-    min=0.; max=1.24
-    if WhichJets=="ak5CaloJets":
-        min=0.
-    hRat.SetMaximum(1.24)
-    hRat.SetMinimum(0.0)
+    ymin=0.; ymax=1.24
+
+    hRat.SetMaximum(ymax)
+    hRat.SetMinimum(ymin)
     hRat.Draw()
 
 
@@ -81,3 +81,7 @@ if __name__ == '__main__':
     # f2.Close()
 
 
+#===============================================================
+    if os.getenv("FROMGUI") == None:
+        print "Not from GUI"
+        raw_input('\npress return to end the program...')
