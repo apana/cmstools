@@ -1,5 +1,5 @@
 from ROOT import gROOT, gStyle, gSystem, TCanvas, TF1, TFile, TH1F, TColor, TLine, TLegend, TLatex, SetOwnership, TChain
-import sys,string,math,os,ROOT
+import sys,string,math,os,ROOT, datetime
 
 from PhysicsTools.PythonAnalysis import *
 from ROOT import *
@@ -10,224 +10,165 @@ sys.path.append(os.path.join(os.environ.get("HOME"),'rootmacros'))
 from myPyRootMacros import prepPlot, SetStyle, GetHist, PrepLegend, DrawText, prep1by2Plot, ResetAxisAndLabelSizes
 #===============================================================
 
-## dist="et"
-## dist="phi"
-dist="eta"
-xmax=-1.
-## L1Obj        = "Tau"
-## L1Obj        = "IsoTau"
-## L1Obj        = "NonIsolatedEG"
-## L1Obj        = "IsolatedEG"
-L1Obj        = "Muon"; xmax=20
-## L1Obj        = "Jet" ; xmax=75
-## L1Obj        = "CenJet" ; xmax=75
-## L1Obj        = "SET" ; dist="etTot_" ; ## dist="phi"
-## L1Obj        = "SHT" ; dist="etTot_";
-## L1Obj        = "ETT" ;
-## L1Obj        = "MET" ;
-## L1Obj        = "HTT" ;
-## L1Obj        = "HTM" ;
-## L1Obj        = "HFRings" ; dist="m_ringEtSums"; 
 
-if dist == "phi" or dist == "eta": xmax=-1;
+#Dists=["et","eta","phi"]
+#L1Objs=["Jet","CenJet","Muon","ETT","HTT","ETM","HTM","IsoEG","NonIsoEG","IsoTau","NonIsoTau"]
 
-label1 = "reEmul";
-treeName1="l1UpgradeTree/L1UpgradeTree"
-fileNames1=["L1Trigger/L1TCommon/test/l1t_stage2.root"]
+Dists=["et"]
+L1Objs=["Muon"]
 
-label2 = "cmsDriver";
+label1 = "l1t-calostage2";
+treeName1="l1UpgradeEmuTree/L1UpgradeTree"
+fileNames1=["L1Ntuple.root"]
+# fileNames1=["/afs/cern.ch/work/a/apana/L1Upgrade/Stage2/l1t-integration-v2/CMSSW_8_0_0_pre6/src/L1Ntuple.root"]
+
+label2 = "l1t-integration-v3.1";
 treeName2="l1UpgradeEmuTree/L1UpgradeTree"
-fileNames2=["L1Ntuple.root"]
+## fileNames2=["L1Trigger/L1TCommon/test/l1t_stage2.root"]
+## fileNames2=["/afs/cern.ch/work/a/apana/L1Upgrade/Stage2/l1t-tsg-v2-patch1/CMSSW_8_0_0_pre6/src/L1Ntuple.root"]
+fileNames2=["/afs/cern.ch/work/a/apana/L1Upgrade/Stage2/l1t-integration-v3.1/CMSSW_8_0_0_pre6/src/L1Ntuple.root"]
 
-Rebin=1  ## used to overide default rebin value
 
-PrintPlot=False
-# PrintPlot=True
+Rebin=-1  ## used to overide default rebin value
+# PrintPlot=False
+PrintPlot=True
+
+outdir="compNT_" + str(datetime.date.today())  ## output directory for plots
 
 #===============================================================
 
 class SetupHistos():
 
-    def __init__(self, L1Object_="xxx", Dist_="et"):
+    def setPlotAttributes(self,h1,h2,l1coll,varString,cutString,logy,ymin,ymax,xmin,xmax):
+        self.h1=h1
+        self.h2=h2
+        self.l1coll=l1coll
+        self.varString=varString
+        self.cutString=cutString
+        self.logy=logy
+        self.ymin=ymin
+        self.ymax=ymax
+        self.xmin=xmin
+        self.xmax=xmax 
+    
+    def __init__(self, L1Object="xxx", Dist="et"):
 
-        self.l1coll="XXX"; self.varString=""; self.cutString=""; self.logy=1; self.ymin=0.1; self.ymax=-1; 
-        nbins_=100; xmin_=0; xmax_=1000.; rebin_=1;
- 
-        if (L1Object_ == "Jet" or L1Object_ == "CenJet"):
-            nbins_=500; xmin_=0.; xmax_=500.
+        ### Energy Sum indices ###  Base on "DataFormats/L1Trigger/interface/EtSum.h"
+        ETT = 0; HTT = 1; ETM = 2; HTM = 3
+        
+        l1coll="XXX"; varString=""; cutString=""; logy=1; ymin=0.1; ymax=-1; xmin=0.; xmax=-1; nbins=100; rebin=1;
+        self.setPlotAttributes(ROOT.nullptr,ROOT.nullptr,l1coll,varString,cutString,logy,ymin,ymax,xmin,xmax)
+        
+        if (L1Object == "Jet" or L1Object == "CenJet"):
+            nbins=250; xmin=0.; xmax=250.
+
+            l1coll="L1Upgrade.jetEt";
+            cutString = "L1Upgrade.jetBx==0"            
+            if L1Object == "CenJet":
+                cutString = cutString + " && L1Upgrade.jetEta>-3. && L1Upgrade.jetEta<3.";
+
+            if Dist == "eta":
+                l1coll="L1Upgrade.jetEta";
+                cutstring = cutString + " && L1Upgrade.jetEt>30."
+            if Dist == "phi":
+                l1coll="L1Upgrade.jetPhi";
+
+        elif (L1Object == "NonIsoTau"  or L1Object == "IsoTau"):
+            nbins=64; xmin=0.; xmax=64.
             
-            self.l1coll="L1Upgrade.jetEt";
-            if L1Object_ == "CenJet":
-                self.cutString="L1Upgrade.jetEta>-3. && L1Upgrade.jetEta<3. && L1Upgrade.jetBx==0";
-
-            if Dist_ == "eta":
-                self.l1coll="L1Upgrade.jetEta";
-            if Dist_ == "phi":
-                self.l1coll="L1Upgrade.jetPhi";
+            l1coll="L1Upgrade.tauEt";
+            cutString="L1Upgrade.tauIso==0";
+            if (L1Object == "IsoTau"):
+                cutString="L1Upgrade.tauIso==1";
                 
-        elif (L1Object_ == "Tau"):
-            self.l1coll="GT.Rankjet";
-            self.cutString="GT.Taujet==1";
-            nbins_=64; xmin_=0.; xmax_=64.
-            rebin_=1;
+            if Dist == "eta":
+                l1coll="L1Upgrade.tauEta";
+                cutString = cutString + " && L1Upgrade.tauEt>30."
+            if Dist == "phi":
+                l1coll="L1Upgrade.tauPhi";
 
-            if Dist_ == "eta":
-                self.l1coll="GT.Etajet";
-            if Dist_ == "phi":
-                self.l1coll="GT.Phijet";
-
-        elif (L1Object_ == "ForJet"):
-            self.l1coll="GT.Rankjet";
-            self.cutString="GT.Fwdjet==1";
-            nbins_=64; xmin_=0.; xmax_=64.
-            rebin_=1;
-
-            if Dist_ == "eta":
-                self.l1coll="GT.Etajet";
-            if Dist_ == "phi":
-                self.l1coll="GT.Phijet";
-
-        elif (L1Object_ == "NonIsolatedEG" or L1Object_ == "IsolatedEG"):
-            self.l1coll="GT.Rankel";
-            if (L1Object_ == "NonIsolatedEG"):
-                self.cutString="GT.Isoel==0";
-            else:
-                self.cutString="GT.Isoel==1";
-
-
-            if Dist_ == "eta":
-                self.l1coll="GT.Etael";
-            if Dist_ == "phi":
-                self.l1coll="GT.Phiel";
-
-
-            nbins_=64;xmax_=64;rebin_=1;
-
-        elif ( L1Object_ == "ETT"):
-            self.l1coll="GT.RankETT";
-            self.l1obj=L1Object_;
-            xmax_=460; nbins_=460; rebin_=5;
-
-        elif ( L1Object_ == "HTT"):
-            self.l1coll="GT.RankHTT";
-            self.l1obj=L1Object_;
-            xmax_=460; nbins_=460; rebin_=5;
-
-        elif ( L1Object_ == "MET"):
-            self.l1coll="GT.RankETM";
-            self.l1obj=L1Object_;
-            xmax_=460; nbins_=460; rebin_=5;
-
-            if Dist_ == "phi":
-                self.l1coll="GT.PhiETM";
-
-        elif ( L1Object_ == "MHT"):
-            self.l1coll="GT.RankHTM";
-            self.l1obj=L1Object_;
-            xmax_=460; nbins_=460; rebin_=5;
-
-            if Dist_ == "phi":
-                self.l1coll="GT.PhiHTM";
-
-        elif ( L1Object_ == "SET" or L1Object_ == "SHT"):
-            self.l1coll="l1extraL1EtMissParticles_";
-            if L1Object_ == "SET":
-                self.l1obj="MET";
-                xmax_=1200; nbins_=120; rebin_=5;
-                if ("et"==Dist_):
-                    xmax_=500; nbins_=50; rebin_=2;
-            else:
-                self.l1obj="MHT";
-                xmax_=1.; nbins_=100; rebin_=5;
-                if ("etTot_" == Dist_):
-                    xmax_=1200; nbins_=120; rebin_=5;
-        elif ( L1Object_ == "Muon"):
-            self.l1coll="L1Upgrade.muonEt";
-            xmax_=140; nbins_=140; rebin_=1;
-
-            if Dist_ == "eta":
-                self.l1coll="L1Upgrade.muonEta";
-            if Dist_ == "phi":
-                self.l1coll="L1Upgrade.muonPhi";
+            cutString = cutString + " && L1Upgrade.tauBx==0"
             
-        elif ( L1Object_ == "HFRings"):
-            self.l1coll="l1extraL1HFRingss_";
-            self.l1obj="";
-            xmin_=0; xmax_=50; nbins_=50; rebin_=1;
+        elif (L1Object == "NonIsoEG" or L1Object == "IsoEG"):
+            nbins=64;xmax=64;rebin=1;
 
-        if ("eta"==Dist_):
-            xmin_=-3; xmax_=3; nbins_=36; self.logy=0; rebin_=1
-            ## xmin_=0; xmax_=21; nbins_=21; self.logy=0; rebin_=1
-
-        if ("phi"==Dist_):
-            xmin_=0; xmax_=18; nbins_=18; self.logy=0; rebin_=1
-            if L1Object_ == "MET":
-                xmin_=0; xmax_=72; nbins_=72; self.logy=0; rebin_=1
+            l1coll="L1Upgrade.egEt";
+            if (L1Object == "NonIsolatedEG"):
+                cutString="L1Upgrade.egIso==0";
+            else:
+                cutString="L1Upgrade.egIso==1";
 
 
-        if Rebin > 0: rebin_=Rebin
+            if Dist == "eta":
+                l1coll="L1Upgrade.egEta";
+                cutString = cutString + " && L1Upgrade.egEt>10."                
+            if Dist == "phi":
+                l1coll="L1Upgrade.egPhi";
 
-        hname1_= L1Object_ + "_1"; hname2_=L1Object_ +"_2";
-        h1_ = TH1F(hname1_,hname1_,nbins_,xmin_,xmax_);
-        h2_ = TH1F(hname2_,hname2_,nbins_,xmin_,xmax_);
+            cutString = cutString + " && L1Upgrade.egBx==0"
 
-        h1_.Sumw2();  h2_.Sumw2();
-        h1_.SetLineColor(ROOT.kRed); h2_.SetLineColor(kBlue);
-        h1_.Rebin(rebin_);           h2_.Rebin(rebin_);
-        self.h1=h1_
-        self.h2=h2_
-
-
-class HistAttr:
-    def __init__(self, histName_, label_, nbins_, xmin_, xmax_, color_):
-        self.histName = histName_
-        self.label = label_
-        self.color = color_
-        self.nbins = nbins_
-        self.xmin  = xmin_
-        self.xmax  = xmax_
-
-if __name__ == '__main__':
-
-    SetStyle()
-    gStyle.SetOptStat(110);
-#===============================================================
+        elif ( L1Object == "ETT" or L1Object == "HTT" or L1Object == "ETM" or L1Object == "HTM"):
+            xmax=460; nbins=460; rebin=5;
+            
+            if L1Object == "ETT":
+                sumIndx= ETT
+            elif L1Object == "HTT":
+                sumIndx= HTT
+            elif L1Object == "HTM":
+                sumIndx= HTM
+            elif L1Object == "ETM":
+                sumIndx= ETM
+     
+            l1coll="L1Upgrade.sumEt[" + str(sumIndx) + "]"
+            if Dist == "phi":
+                l1coll="L1Upgrade.sumPhi[" + str(sumIndx) + "]"
+            
+            cutString="L1Upgrade.sumType==" + str(sumIndx) + " && L1Upgrade.sumBx[" + str(sumIndx) + "]==0"
 
 
-    ## print "\n",fileName1
-    ## print fileName2,"\n"
-    ## f1 = ROOT.TFile.Open(fileName1);  tree1=ROOT.gDirectory.Get("Events")
-    ## f2 = ROOT.TFile.Open(fileName2);  tree2=ROOT.gDirectory.Get("Events")
+        elif ( L1Object == "Muon"):
+            xmax=60; nbins=60; rebin=1;
 
-    tree1=TChain(treeName1);
-    i=0
-    for f in fileNames1:
-        i=i+1
-        print i,f
-        tree1.Add(f);
+            l1coll="L1Upgrade.muonEt";
+            cutString = "L1Upgrade.muonBx==0"
+            
+            if Dist == "eta":
+                l1coll="L1Upgrade.muonEta";
+                cutString = cutString + " && L1Upgrade.muonEt>20."
+            if Dist == "phi":
+                l1coll="L1Upgrade.muonPhi";
 
-    print "\n"
+            
+        if ("eta"==Dist):
+            xmin=-5; xmax=5; nbins=40; logy=0; rebin=1
+            if L1Object.find("EG") > -1 or L1Object.find("Muon") > -1:
+                xmin=-3; xmax=3; nbins=30; logy=0; rebin=1
+        if ("phi"==Dist):
+            xmin=-3.14; xmax=3.14; nbins=32; logy=0; rebin=1
 
-    tree2=TChain(treeName2);
-    i=0
-    for f in fileNames2:
-        i=i+1
-        print i,f
-        tree2.Add(f)
+
+        if Rebin > 0: rebin=Rebin
+
+        hname1= L1Object + "_" + Dist + "_1"; hname2=L1Object + "_" + Dist +"_2";
+        h1 = TH1F(hname1,hname1,nbins,xmin,xmax);
+        h2 = TH1F(hname2,hname2,nbins,xmin,xmax);
+
+        h1.Sumw2();  h2.Sumw2();
+        h1.SetLineColor(ROOT.kRed); h2.SetLineColor(kBlue);
+        h1.Rebin(rebin);           h2.Rebin(rebin);
+
+        self.setPlotAttributes(h1,h2,l1coll,varString,cutString,logy,ymin,ymax,xmin,xmax)
+        
+def plotDist(L1Obj,dist,Rebin,outdir):
 
     histos=SetupHistos(L1Obj,dist)
 
     branch1=histos.l1coll;   cut1=histos.cutString;
     branch2=histos.l1coll;   cut2=histos.cutString;
 
-    ymax=-1;
+    xmax=histos.xmax
+    ymax=histos.ymax
 
-    ## if L1Obj == "CenJet":
-    ##     cut2="GT.Fwdjet==0"
-    ##     # ymax=1e6;
-
-    if L1Obj == "ForJet":
-        xmax=25;
 
     print "\nL1Obj= ",L1Obj,"\n"
     print branch1,cut1
@@ -247,9 +188,9 @@ if __name__ == '__main__':
     if ymax>0:
         h1.GetYaxis().SetRangeUser(0.2,ymax);
 
-    print "CCLA XMAX= ",xmax
-    if xmax>0:
-        h1.GetXaxis().SetRangeUser(0,xmax);
+
+    #if xmax>0:
+    #    h1.GetXaxis().SetRangeUser(0,xmax);
 
 
     xlabel="xxx"
@@ -291,21 +232,21 @@ if __name__ == '__main__':
     DrawText(0.525,0.8,L1Obj,0.04)
     DrawText(0.525,0.75,xlabel,0.04)
     gPad.Update();
-    print h1.GetListOfFunctions()
-    print h1.GetListOfFunctions().FindObject("stats")
-    ## tt1=h1.GetFunction("stats");
-    ## tt1.SetTextColor(h1.GetLineColor());
-    ## tt2=h2.GetFunction("stats");
-    ## tt2.SetTextColor(h2.GetLineColor());
-    ## x1 = tt1.GetX1NDC();    y1 = tt1.GetY1NDC();
-    ## x2 = tt1.GetX2NDC();    y2 = tt1.GetY2NDC();
-    ## ## dx = x2-x1;             dy = y2-y1;
-    ## dy = 0.105;
-    ## dx = 0.20;
-    ## tt1.SetY2NDC(y2);        tt1.SetX2NDC(x2);
-    ## tt1.SetY1NDC(y2-dy);     tt1.SetX1NDC(x2-dx);
-    ## tt2.SetY2NDC(y2-dy);     tt2.SetX2NDC(x2);
-    ## tt2.SetY1NDC(y2-2*dy);   tt2.SetX1NDC(x2-dx);
+    ## print h1.GetListOfFunctions()
+    ## print h1.GetListOfFunctions().FindObject("stats")
+    tt1=h1.GetListOfFunctions().FindObject("stats")
+    tt1.SetTextColor(h1.GetLineColor());
+    tt2=h2.GetListOfFunctions().FindObject("stats")
+    tt2.SetTextColor(h2.GetLineColor());
+    x1 = tt1.GetX1NDC();    y1 = tt1.GetY1NDC();
+    x2 = tt1.GetX2NDC();    y2 = tt1.GetY2NDC();
+    ## dx = x2-x1;             dy = y2-y1;
+    dy = 0.105;
+    dx = 0.20;
+    tt1.SetY2NDC(y2);        tt1.SetX2NDC(x2);
+    tt1.SetY1NDC(y2-dy);     tt1.SetX1NDC(x2-dx);
+    tt2.SetY2NDC(y2-dy);     tt2.SetX2NDC(x2);
+    tt2.SetY1NDC(y2-2*dy);   tt2.SetX1NDC(x2-dx);
     gPad.Modified();
     gPad.Update();
 
@@ -316,12 +257,9 @@ if __name__ == '__main__':
     hRat.SetStats(0)
     ResetAxisAndLabelSizes(hRat,0.065,0.01)
     cname="Ratio"
-    ## c2 = prepPlot("c2",cname,250,120,500,500)
-    ## c2.SetLogy(0);
+
     p2.cd()
 
-    if xmax>0:
-        hRat.GetXaxis().SetRangeUser(0,xmax);
 
     ## hRat.GetXaxis().SetTitle(xlabel)
     min=0.5; max=1.5
@@ -335,10 +273,48 @@ if __name__ == '__main__':
     gPad.Update();
 
     if (PrintPlot):
-        psname="comp_run251718_" + L1Obj + "_" + dist
+        if not os.path.exists(outdir):
+            os.makedirs(outdir)
+        psname=os.path.join(outdir,"comp_" + L1Obj + "_" + dist)
         c1.Print(psname + ".gif")
 
+    cont=""
+    cont=raw_input('\npress return to continue... anything else to quit...')
+    if 0 < len(cont):
+        sys.exit(0)
+        
+if __name__ == '__main__':
+
+    SetStyle()
+    gStyle.SetOptStat(110);
 #===============================================================
-    if os.getenv("FROMGUI") == None:
-        print "Not from GUI"
-        raw_input('\npress return to end the program...')
+
+    tree1=TChain(treeName1);
+    i=0
+    for f in fileNames1:
+        i=i+1
+        print i,f
+        tree1.Add(f);
+
+    print "\n"
+
+    tree2=TChain(treeName2);
+    i=0
+    for f in fileNames2:
+        i=i+1
+        print i,f
+        tree2.Add(f)
+
+
+    for L1Obj in L1Objs:
+        for dist in Dists:
+            if dist == "eta" and (L1Obj == "ETT" or  L1Obj == "HTT" or  L1Obj == "ETM" or  L1Obj == "HTM"):
+                pass
+            else:
+                plotDist(L1Obj,dist,Rebin,outdir)
+        
+    
+#===============================================================
+#    if os.getenv("FROMGUI") == None:
+#        print "Not from GUI"
+#        raw_input('\npress return to end the program...')
