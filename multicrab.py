@@ -3,61 +3,93 @@ import datetime
 
 config = Configuration()
 
-JOBID   = 'l1-tsg-v3'
+JOBID   = 'l1-tsg-v4_plusLayer1'
 RunOnMC = False
 WriteToCERN = True
-
-pSet = 'l1NtupleRECO_RAW2DIGI.py'
-# pSet = 'l1NtupleRECO_RAW2DIGI_ht.py'
-# pSet = 'l1NtupleStg1_RAW2DIGI.py'
+## WriteToCERN = False
 useParent = False
-## runid = '259626'  ## use '-1' for all runs
-## runid = '259721'  ## use '-1' for all runs
-## runid = '258440'  ## use '-1' for all runs
-runid = '258448'  ## use '-1' for all runs
+
+Option = 1
+##Option = 2
+
+#################################
+
+if Option == 1:
+    
+    pSet = 'l1t_yeslayer1.py'
+    Nunits=10
+    useParent=False
+
+    ## runid = '259626'  ## use '-1' for all runs
+    ## runid = '259721'  ## use '-1' for all runs
+    ## runid = '258440'  ## use '-1' for all runs
+    ## runid = '258448'  ## use '-1' for all runs
+    ## runid = '258445'  ## use '-1' for all runs
+    ## runid = '258425'  ## use '-1' for all runs
+    ## runid = '258427'  ## use '-1' for all runs
+    ## runid = '258428'  ## use '-1' for all runs
+    runid = '258434'  ## use '-1' for all runs
+
+    logbase="Run" + runid
+
+    if int(runid)==259626 or int(runid)==259721:
+        ## myJobs={runid + "_ZeroBias1":["/ZeroBias1/Run2015D-16Dec2015-v1/RECO",Nunits],\
+            ##         runid + "_ZeroBias2":["/ZeroBias2/Run2015D-16Dec2015-v1/RECO",Nunits],\
+            ##         runid + "_ZeroBias3":["/ZeroBias3/Run2015D-16Dec2015-v1/RECO",Nunits],\
+            ##         runid + "_ZeroBias4":["/ZeroBias4/Run2015D-16Dec2015-v1/RECO",Nunits]
+        ## }
+
+        myJobs={runid + "_ZeroBias1":["/ZeroBias1/Run2015D-v1/RAW",Nunits],\
+                runid + "_ZeroBias2":["/ZeroBias2/Run2015D-v1/RAW",Nunits],\
+                runid + "_ZeroBias3":["/ZeroBias3/Run2015D-v1/RAW",Nunits],\
+                runid + "_ZeroBias4":["/ZeroBias4/Run2015D-v1/RAW",Nunits]
+    }
+    else:
+        myJobs={# runid + "_ZeroBias":["/ZeroBias/Run2015D-16Dec2015-v1/RECO",Nunits]
+            runid + "_ZeroBias":["/ZeroBias/Run2015D-v1/RAW",Nunits]
+        }
+    
+elif Option == 2:
+
+    pSet='l1NtupleRECO_RAW2DIGI.py'
+    logbase="RECOskims"
+    Nunits=200
+    runid = '-1'  ## use '-1' for all runs
+    myJobs={"DoubleEG_ZEle"   :["/DoubleEG/Run2015D-ZElectron-16Dec2015-v2/RAW-RECO",Nunits],\
+            ## "MuonEG_TopMuEg"  :["/MuonEG/Run2015D-TopMuEG-16Dec2015-v1/RAW-RECO"    ,Nunits],\
+            "SingleMuon_MuTau":["/SingleMuon/Run2015D-MuTau-16Dec2015-v1/RAW-RECO"  ,Nunits],\
+            "SingleMuon_ZMu"  :["/SingleMuon/Run2015D-ZMu-16Dec2015-v1/RAW-RECO"    ,Nunits],\
+    }
+
+elif Option == 3:
+
+    ## logbase="MC_ZeroBias"
+    ## Nunits=20
+    ## RunOnMC = True
+    ## pSet='l1NtupleMC_RAW2DIGI.py'
+    ## myJobs={
+    ##     ## "SingleNeutrino_25nsPU10"   : ["/SingleNeutrino/RunIIFall15DR76-25nsPUfixed10NzshcalRaw_76X_mcRun2_asymptotic_v12-v1/GEN-SIM-RAW",Nunits],\
+        ##     ## "SingleNeutrino_25nsPU20"   : ["/SingleNeutrino/RunIIFall15DR76-25nsPUfixed20NzshcalRaw_76X_mcRun2_asymptotic_v12-v1/GEN-SIM-RAW",Nunits],\
+        ##     ## "SingleNeutrino_25nsPU30"   : ["/SingleNeutrino/RunIIFall15DR76-25nsPUfixed30NzshcalRaw_76X_mcRun2_asymptotic_v12-v1/GEN-SIM-RAW",Nunits],\
+        ##     ## "SingleNeutrino_25nsPU40"   : ["/SingleNeutrino/RunIIFall15DR76-25nsPUfixed40NzshcalRaw_76X_mcRun2_asymptotic_v12-v1/GEN-SIM-RAW",Nunits],\
+        ##     "SingleNeutrino_25nsPU50"   : ["/SingleNeutrino/RunIIFall15DR76-25nsPUfixed50NzshcalRaw_76X_mcRun2_asymptotic_v12-v2/GEN-SIM-RAW",Nunits],\
+        ## }
+
+    logbase="MC_ZeroBias"
+    Nunits=20
+    RunOnMC = True
+    pSet='l1NtupleMC_RAW2DIGI.py'
+    myJobs={"SingleNeutrino_25nsPU10"   : ["/SingleNeutrino/RunIIFall15DR76-25nsPUfixed10NzshcalRaw_76X_mcRun2_asymptotic_v12-v1/AODSIM",Nunits],\
+            "SingleNeutrino_25nsPU20"   : ["/SingleNeutrino/RunIIFall15DR76-25nsPUfixed20NzshcalRaw_76X_mcRun2_asymptotic_v12-v1/AODSIM",Nunits],\
+            "SingleNeutrino_25nsPU30"   : ["/SingleNeutrino/RunIIFall15DR76-25nsPUfixed30NzshcalRaw_76X_mcRun2_asymptotic_v12-v1/AODSIM",Nunits],\
+            #"SingleNeutrino_25nsPU40"   : ["/SingleNeutrino/RunIIFall15DR76-25nsPUfixed40NzshcalRaw_76X_mcRun2_asymptotic_v12-v1/AODSIM",Nunits],\
+            #"SingleNeutrino_25nsPU50"   : ["/SingleNeutrino/RunIIFall15DR76-25nsPUfixed50NzshcalRaw_76X_mcRun2_asymptotic_v12-v1/AODSIM",Nunits],\
+    }
+
+###############################################################################
 
 JSON='/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/Reprocessing/Cert_13TeV_16Dec2015ReReco_Collisions15_25ns_JSON.txt'
 
-#################################
-
-Nunits=5
-useParent=True
-logbase="Run" + runid
-
-if int(runid)==258440 or int(runid)==258448:
-    myJobs={runid + "_ZeroBias":["/ZeroBias/Run2015D-16Dec2015-v1/RECO",Nunits]
-    }
-else:
-    myJobs={runid + "_ZeroBias1":["/ZeroBias1/Run2015D-16Dec2015-v1/RECO",Nunits],\
-            runid + "_ZeroBias2":["/ZeroBias2/Run2015D-16Dec2015-v1/RECO",Nunits],\
-            runid + "_ZeroBias3":["/ZeroBias3/Run2015D-16Dec2015-v1/RECO",Nunits],\
-            runid + "_ZeroBias4":["/ZeroBias4/Run2015D-16Dec2015-v1/RECO",Nunits]
-    }
-
-#################################
-
-## logbase="RECOskims"
-## Nunits=200
-## runid = '-1'  ## use '-1' for all runs
-## myJobs={"DoubleEG_ZEle"   :["/DoubleEG/Run2015D-ZElectron-16Dec2015-v2/RAW-RECO",Nunits],\
-##         ## "MuonEG_TopMuEg"  :["/MuonEG/Run2015D-TopMuEG-16Dec2015-v1/RAW-RECO"    ,Nunits],\
-##         "SingleMuon_MuTau":["/SingleMuon/Run2015D-MuTau-16Dec2015-v1/RAW-RECO"  ,Nunits],\
-##         "SingleMuon_ZMu"  :["/SingleMuon/Run2015D-ZMu-16Dec2015-v1/RAW-RECO"    ,Nunits],\
-## }
-
-#################################
-
-## Nunits=20
-## RunOnMC = True
-## pSet='xxx'
-## myJobs={"SingleNeutrino_25nsPU10"   : ["/SingleNeutrino/RunIIFall15DR76-25nsPUfixed10NzshcalRaw_76X_mcRun2_asymptotic_v12-v1/AODSIM",Nunits],\
-##         #"SingleNeutrino_25nsPU20"   : ["/SingleNeutrino/RunIIFall15DR76-25nsPUfixed20NzshcalRaw_76X_mcRun2_asymptotic_v12-v1/AODSIM",Nunits],\
-##         #"SingleNeutrino_25nsPU30"   : ["/SingleNeutrino/RunIIFall15DR76-25nsPUfixed30NzshcalRaw_76X_mcRun2_asymptotic_v12-v1/AODSIM",Nunits],\
-##         #"SingleNeutrino_25nsPU40"   : ["/SingleNeutrino/RunIIFall15DR76-25nsPUfixed40NzshcalRaw_76X_mcRun2_asymptotic_v12-v1/AODSIM",Nunits],\
-##         #"SingleNeutrino_25nsPU50"   : ["/SingleNeutrino/RunIIFall15DR76-25nsPUfixed50NzshcalRaw_76X_mcRun2_asymptotic_v12-v1/AODSIM",Nunits],\
-## }
-
-###
 splitting   = 'LumiBased'
 if RunOnMC :
     splitting   = 'FileBased'
