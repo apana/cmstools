@@ -22,7 +22,7 @@ def GetFiles(Dir):
 if __name__ == '__main__':
 
     narg=len(sys.argv)
-    if narg < 2 :
+    if narg < 3 :
         print usage.__doc__
         sys.exit(1)
 
