@@ -8,6 +8,11 @@ then
   exit 1
 fi
 
+if ! hash crab 2>/dev/null; then
+    echo "Crab not setup -- Exiting"
+    exit 1
+fi
+
 logDir=$1
 command=$2
 

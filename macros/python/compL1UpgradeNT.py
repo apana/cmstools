@@ -10,8 +10,8 @@ sys.path.append(os.path.join(os.environ.get("HOME"),'rootmacros'))
 from myPyRootMacros import prepPlot, SetStyle, GetHist, PrepLegend, DrawText, prep1by2Plot, ResetAxisAndLabelSizes
 #===============================================================
 
-## ScaleToNumberOfEntries=False
-ScaleToNumberOfEntries=True
+ScaleToNumberOfEntries=False
+## ScaleToNumberOfEntries=True
 Rebin=-1  ## used to overide default rebin value
 
 PrintPlot=False
@@ -21,10 +21,10 @@ outdir="compNT_" + str(datetime.date.today())  ## output directory for plots
 ## Dists=["et","eta","phi"]
 Dists=["et"]
 ## L1Objs=["Jet","CenJet","Muon","ETT","HTT","ETM","HTM","EG","IsoEG","NonIsoEG","Tau","IsoTau","NonIsoTau"]
-L1Objs=["Muon","EG","IsoEG","NonIsoEG","Tau","IsoTau","NonIsoTau","ETT","HTT","ETM","HTM",]
+## L1Objs=["Muon","EG","IsoEG","NonIsoEG","Tau","IsoTau","NonIsoTau","ETT","HTT","ETM","HTM",]
 
 ## Dists=["et"]
-## L1Objs=["HTT","ETT","ETM","HTM"]
+L1Objs=["HTT","ETT","ETM","HTM"]
 
 ## Dists=["et","eta","phi"]
 ## L1Objs=["Muon"]
@@ -32,110 +32,20 @@ L1Objs=["Muon","EG","IsoEG","NonIsoEG","Tau","IsoTau","NonIsoTau","ETT","HTT","E
 ## Dists=["eta"]
 ## L1Objs=["Jet","Tau","EG","Muon"]
 
-label1 = "l1t-tsg-v3";
+label1 = "l1t-tsg-v4p1";
 treeName1="l1UpgradeEmuTree/L1UpgradeTree"
-## fileNames1=["L1Ntuple.root"]
+fileNames1=["L1Ntuple.root"]
 ## label1 = "l1t-integration-v13.1";
 ## treeName1="l1UpgradeEmuTree/L1UpgradeTree"
 ## fileNames1=["/afs/cern.ch/work/a/apana/L1Upgrade/Stage2/l1t-integration-v13.1/CMSSW_8_0_2/src/L1Ntuple.root"]
 # fileNames1=["/afs/cern.ch/work/a/apana/L1Upgrade/Stage2/l1t-integration-v2/CMSSW_8_0_0_pre6/src/L1Ntuple.root"]
-fileNames1=[
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v3/ZeroBias3/crab_l1-tsg-v3__259721_ZeroBias3/160225_181422/0000/L1Ntuple_1.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v3/ZeroBias3/crab_l1-tsg-v3__259721_ZeroBias3/160225_181422/0000/L1Ntuple_10.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v3/ZeroBias3/crab_l1-tsg-v3__259721_ZeroBias3/160225_181422/0000/L1Ntuple_11.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v3/ZeroBias3/crab_l1-tsg-v3__259721_ZeroBias3/160225_181422/0000/L1Ntuple_12.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v3/ZeroBias3/crab_l1-tsg-v3__259721_ZeroBias3/160225_181422/0000/L1Ntuple_13.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v3/ZeroBias3/crab_l1-tsg-v3__259721_ZeroBias3/160225_181422/0000/L1Ntuple_14.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v3/ZeroBias3/crab_l1-tsg-v3__259721_ZeroBias3/160225_181422/0000/L1Ntuple_15.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v3/ZeroBias3/crab_l1-tsg-v3__259721_ZeroBias3/160225_181422/0000/L1Ntuple_17.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v3/ZeroBias3/crab_l1-tsg-v3__259721_ZeroBias3/160225_181422/0000/L1Ntuple_18.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v3/ZeroBias3/crab_l1-tsg-v3__259721_ZeroBias3/160225_181422/0000/L1Ntuple_2.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v3/ZeroBias3/crab_l1-tsg-v3__259721_ZeroBias3/160225_181422/0000/L1Ntuple_20.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v3/ZeroBias3/crab_l1-tsg-v3__259721_ZeroBias3/160225_181422/0000/L1Ntuple_21.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v3/ZeroBias3/crab_l1-tsg-v3__259721_ZeroBias3/160225_181422/0000/L1Ntuple_23.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v3/ZeroBias3/crab_l1-tsg-v3__259721_ZeroBias3/160225_181422/0000/L1Ntuple_3.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v3/ZeroBias3/crab_l1-tsg-v3__259721_ZeroBias3/160225_181422/0000/L1Ntuple_31.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v3/ZeroBias3/crab_l1-tsg-v3__259721_ZeroBias3/160225_181422/0000/L1Ntuple_32.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v3/ZeroBias3/crab_l1-tsg-v3__259721_ZeroBias3/160225_181422/0000/L1Ntuple_34.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v3/ZeroBias3/crab_l1-tsg-v3__259721_ZeroBias3/160225_181422/0000/L1Ntuple_39.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v3/ZeroBias3/crab_l1-tsg-v3__259721_ZeroBias3/160225_181422/0000/L1Ntuple_4.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v3/ZeroBias3/crab_l1-tsg-v3__259721_ZeroBias3/160225_181422/0000/L1Ntuple_42.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v3/ZeroBias3/crab_l1-tsg-v3__259721_ZeroBias3/160225_181422/0000/L1Ntuple_43.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v3/ZeroBias3/crab_l1-tsg-v3__259721_ZeroBias3/160225_181422/0000/L1Ntuple_44.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v3/ZeroBias3/crab_l1-tsg-v3__259721_ZeroBias3/160225_181422/0000/L1Ntuple_46.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v3/ZeroBias3/crab_l1-tsg-v3__259721_ZeroBias3/160225_181422/0000/L1Ntuple_47.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v3/ZeroBias3/crab_l1-tsg-v3__259721_ZeroBias3/160225_181422/0000/L1Ntuple_48.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v3/ZeroBias3/crab_l1-tsg-v3__259721_ZeroBias3/160225_181422/0000/L1Ntuple_49.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v3/ZeroBias3/crab_l1-tsg-v3__259721_ZeroBias3/160225_181422/0000/L1Ntuple_5.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v3/ZeroBias3/crab_l1-tsg-v3__259721_ZeroBias3/160225_181422/0000/L1Ntuple_50.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v3/ZeroBias3/crab_l1-tsg-v3__259721_ZeroBias3/160225_181422/0000/L1Ntuple_51.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v3/ZeroBias3/crab_l1-tsg-v3__259721_ZeroBias3/160225_181422/0000/L1Ntuple_54.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v3/ZeroBias3/crab_l1-tsg-v3__259721_ZeroBias3/160225_181422/0000/L1Ntuple_55.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v3/ZeroBias3/crab_l1-tsg-v3__259721_ZeroBias3/160225_181422/0000/L1Ntuple_56.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v3/ZeroBias3/crab_l1-tsg-v3__259721_ZeroBias3/160225_181422/0000/L1Ntuple_57.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v3/ZeroBias3/crab_l1-tsg-v3__259721_ZeroBias3/160225_181422/0000/L1Ntuple_58.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v3/ZeroBias3/crab_l1-tsg-v3__259721_ZeroBias3/160225_181422/0000/L1Ntuple_59.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v3/ZeroBias3/crab_l1-tsg-v3__259721_ZeroBias3/160225_181422/0000/L1Ntuple_6.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v3/ZeroBias3/crab_l1-tsg-v3__259721_ZeroBias3/160225_181422/0000/L1Ntuple_60.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v3/ZeroBias3/crab_l1-tsg-v3__259721_ZeroBias3/160225_181422/0000/L1Ntuple_61.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v3/ZeroBias3/crab_l1-tsg-v3__259721_ZeroBias3/160225_181422/0000/L1Ntuple_62.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v3/ZeroBias3/crab_l1-tsg-v3__259721_ZeroBias3/160225_181422/0000/L1Ntuple_63.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v3/ZeroBias3/crab_l1-tsg-v3__259721_ZeroBias3/160225_181422/0000/L1Ntuple_64.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v3/ZeroBias3/crab_l1-tsg-v3__259721_ZeroBias3/160225_181422/0000/L1Ntuple_65.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v3/ZeroBias3/crab_l1-tsg-v3__259721_ZeroBias3/160225_181422/0000/L1Ntuple_66.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v3/ZeroBias3/crab_l1-tsg-v3__259721_ZeroBias3/160225_181422/0000/L1Ntuple_67.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v3/ZeroBias3/crab_l1-tsg-v3__259721_ZeroBias3/160225_181422/0000/L1Ntuple_68.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v3/ZeroBias3/crab_l1-tsg-v3__259721_ZeroBias3/160225_181422/0000/L1Ntuple_69.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v3/ZeroBias3/crab_l1-tsg-v3__259721_ZeroBias3/160225_181422/0000/L1Ntuple_7.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v3/ZeroBias3/crab_l1-tsg-v3__259721_ZeroBias3/160225_181422/0000/L1Ntuple_70.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v3/ZeroBias3/crab_l1-tsg-v3__259721_ZeroBias3/160225_181422/0000/L1Ntuple_8.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v3/ZeroBias3/crab_l1-tsg-v3__259721_ZeroBias3/160225_181422/0000/L1Ntuple_9.root",
-## SingleNeutrino_25nsPU30/160228_150657/0000/L1Ntuple_9.root",
-## SingleNeutrino_25nsPU30/160228_150657/0000/L1Ntuple_90.root",
-## SingleNeutrino_25nsPU30/160228_150657/0000/L1Ntuple_91.root",
-## SingleNeutrino_25nsPU30/160228_150657/0000/L1Ntuple_92.root",
-]
+
 
 label2 = "l1t-tsg-v4";
 treeName2="l1UpgradeEmuTree/L1UpgradeTree"
-## fileNames2=["L1Trigger/L1TCommon/test/l1t_stage2.root"]
+fileNames2=["/uscmst1b_scratch/lpc1/lpctrig/apana/L1Upgrade/Stage2/l1ntuples/l1-tsg-v4/CMSSW_8_0_2/src/L1Ntuple.root"]
 ## fileNames2=["/afs/cern.ch/work/a/apana/L1Upgrade/Stage2/l1t-tsg-v2-patch1/CMSSW_8_0_0_pre6/src/L1Ntuple.root"]
 ## fileNames2=["/afs/cern.ch/work/a/apana/L1Upgrade/Stage2/l1t-tsg-v4/CMSSW_8_0_2/src/L1Ntuple.root"]
-fileNames2=[
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v4/ZeroBias3/crab_l1-tsg-v4__259721_ZeroBias3/160315_144943/0000/L1Ntuple_1.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v4/ZeroBias3/crab_l1-tsg-v4__259721_ZeroBias3/160315_144943/0000/L1Ntuple_10.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v4/ZeroBias3/crab_l1-tsg-v4__259721_ZeroBias3/160315_144943/0000/L1Ntuple_11.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v4/ZeroBias3/crab_l1-tsg-v4__259721_ZeroBias3/160315_144943/0000/L1Ntuple_12.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v4/ZeroBias3/crab_l1-tsg-v4__259721_ZeroBias3/160315_144943/0000/L1Ntuple_13.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v4/ZeroBias3/crab_l1-tsg-v4__259721_ZeroBias3/160315_144943/0000/L1Ntuple_14.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v4/ZeroBias3/crab_l1-tsg-v4__259721_ZeroBias3/160315_144943/0000/L1Ntuple_15.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v4/ZeroBias3/crab_l1-tsg-v4__259721_ZeroBias3/160315_144943/0000/L1Ntuple_17.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v4/ZeroBias3/crab_l1-tsg-v4__259721_ZeroBias3/160315_144943/0000/L1Ntuple_18.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v4/ZeroBias3/crab_l1-tsg-v4__259721_ZeroBias3/160315_144943/0000/L1Ntuple_19.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v4/ZeroBias3/crab_l1-tsg-v4__259721_ZeroBias3/160315_144943/0000/L1Ntuple_2.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v4/ZeroBias3/crab_l1-tsg-v4__259721_ZeroBias3/160315_144943/0000/L1Ntuple_20.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v4/ZeroBias3/crab_l1-tsg-v4__259721_ZeroBias3/160315_144943/0000/L1Ntuple_21.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v4/ZeroBias3/crab_l1-tsg-v4__259721_ZeroBias3/160315_144943/0000/L1Ntuple_22.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v4/ZeroBias3/crab_l1-tsg-v4__259721_ZeroBias3/160315_144943/0000/L1Ntuple_23.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v4/ZeroBias3/crab_l1-tsg-v4__259721_ZeroBias3/160315_144943/0000/L1Ntuple_24.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v4/ZeroBias3/crab_l1-tsg-v4__259721_ZeroBias3/160315_144943/0000/L1Ntuple_25.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v4/ZeroBias3/crab_l1-tsg-v4__259721_ZeroBias3/160315_144943/0000/L1Ntuple_26.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v4/ZeroBias3/crab_l1-tsg-v4__259721_ZeroBias3/160315_144943/0000/L1Ntuple_27.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v4/ZeroBias3/crab_l1-tsg-v4__259721_ZeroBias3/160315_144943/0000/L1Ntuple_28.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v4/ZeroBias3/crab_l1-tsg-v4__259721_ZeroBias3/160315_144943/0000/L1Ntuple_29.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v4/ZeroBias3/crab_l1-tsg-v4__259721_ZeroBias3/160315_144943/0000/L1Ntuple_3.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v4/ZeroBias3/crab_l1-tsg-v4__259721_ZeroBias3/160315_144943/0000/L1Ntuple_30.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v4/ZeroBias3/crab_l1-tsg-v4__259721_ZeroBias3/160315_144943/0000/L1Ntuple_31.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v4/ZeroBias3/crab_l1-tsg-v4__259721_ZeroBias3/160315_144943/0000/L1Ntuple_32.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v4/ZeroBias3/crab_l1-tsg-v4__259721_ZeroBias3/160315_144943/0000/L1Ntuple_33.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v4/ZeroBias3/crab_l1-tsg-v4__259721_ZeroBias3/160315_144943/0000/L1Ntuple_34.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v4/ZeroBias3/crab_l1-tsg-v4__259721_ZeroBias3/160315_144943/0000/L1Ntuple_4.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v4/ZeroBias3/crab_l1-tsg-v4__259721_ZeroBias3/160315_144943/0000/L1Ntuple_5.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v4/ZeroBias3/crab_l1-tsg-v4__259721_ZeroBias3/160315_144943/0000/L1Ntuple_6.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v4/ZeroBias3/crab_l1-tsg-v4__259721_ZeroBias3/160315_144943/0000/L1Ntuple_7.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v4/ZeroBias3/crab_l1-tsg-v4__259721_ZeroBias3/160315_144943/0000/L1Ntuple_8.root",
-"root://eoscms//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/L1Menu2016/Stage2/l1-tsg-v4/ZeroBias3/crab_l1-tsg-v4__259721_ZeroBias3/160315_144943/0000/L1Ntuple_9.root",
-]
 
 #===============================================================
 
@@ -156,7 +66,8 @@ class SetupHistos():
     def __init__(self, L1Object="xxx", Dist="et"):
 
         ### Energy Sum indices ###  Base on "DataFormats/L1Trigger/interface/EtSum.h"
-        ETT = 0; HTT = 1; ETM = 2; HTM = 3
+        ## ETT = 0; HTT = 1; ETM = 2; HTM = 3
+        ETT = 0; ETM = 1; HTT = 2; HTM = 3
         
         l1coll="XXX"; varString=""; cutString=""; logy=1; ymin=0.1; ymax=-1; xmin=0.; xmax=-1; nbins=100; rebin=1;
         self.setPlotAttributes(ROOT.nullptr,ROOT.nullptr,l1coll,varString,cutString,logy,ymin,ymax,xmin,xmax)
@@ -228,6 +139,7 @@ class SetupHistos():
             
             ## cutString="L1Upgrade.sumType==" + str(sumIndx) + " && L1Upgrade.sumBx[" + str(sumIndx) + "]==0"
             cutString="L1Upgrade.sumBx[" + str(sumIndx) + "]==0"
+            cutString = cutString + " && " + l1coll + ">1"
 
 
         elif ( L1Object == "Muon"):
