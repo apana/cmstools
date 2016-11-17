@@ -7,29 +7,33 @@ WorkFlows=['RAW']
 ## WorkFlows=['l1Accept']
 ## WorkFlows=['reEmuSimTP']
 
-addRECO=False
-## addRECO=True
+## addRECO=False
+addRECO=True
 
 DataTypes=["data"]
 ## DataTypes=["data","mc"]
 
+HeavyIon=True
 
 ################### Common settings #######
 
 ERA="Run2_2016"
+if HeavyIon:
+    ERA="Run2_2016_PA"
+    
 NEVT="100"
 STEP="RAW2DIGI"
 
 ###########################################
 
 GlobalTags_data={
-    "RECO":"80X_dataRun2_Prompt_v14",\
-    "RAW":"80X_dataRun2_HLT_v12",\
+    "RECO":["80X_dataRun2_Prompt_v14","XXX"],\
+    "RAW":["80X_dataRun2_HLT_v12","80X_dataRun2_pA_HLT_v0"],\
     }
 
 GlobalTags_MC={
-    "RECO":"80X_mcRun2_asymptotic_2016_miniAODv2_v1",\
-    "RAW":"80X_mcRun2_asymptotic_2016_v3",\
+    "RECO":["80X_mcRun2_asymptotic_2016_miniAODv2_v1","XXX"],\
+    "RAW":["80X_mcRun2_asymptotic_2016_v3","XXX"],\
     }
 
 ExtraOptions=[]
@@ -60,6 +64,10 @@ if __name__ == '__main__':
                 GT=GlobalTags["RAW"]
                 CFG=workflow                
 
+            GlobalTag=GT[0]
+            if HeavyIon:
+                GlobalTag=GT[1]
+
             theSTEP=STEP
             if workflow == 'l1Accept':
                 theSTEP = "NONE"
@@ -67,7 +75,7 @@ if __name__ == '__main__':
             pSet="l1Ntuple_" + CFG + endName            
             driverOptions="l1Ntuple -s " + theSTEP + " --python_filename=" + pSet + \
                 " -n " + NEVT + " --no_output --no_exec --era=" + ERA + " --" + DataOrMC + \
-                " --conditions=" + GT + \
+                " --conditions=" + GlobalTag + \
                 " --filein=" + INFILE
 
             customOptions=[]
@@ -99,7 +107,7 @@ if __name__ == '__main__':
             for custom in customOptions:
                 driverOptions = driverOptions + " --customise=" + custom
                 
-            # print workflow, DataOrMC, pSet, GT
+            print workflow, DataOrMC, pSet, GlobalTag
             print driverOptions + "\n"
-            os.system("cmsDriver.py " + driverOptions)
+            ## os.system("cmsDriver.py " + driverOptions)
 
