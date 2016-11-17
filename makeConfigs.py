@@ -7,13 +7,15 @@ WorkFlows=['RAW']
 ## WorkFlows=['l1Accept']
 ## WorkFlows=['reEmuSimTP']
 
-## addRECO=False
-addRECO=True
+addRECO=False
+## addRECO=True
 
-DataTypes=["data"]
+## DataTypes=["data"]
+DataTypes=["mc"]
 ## DataTypes=["data","mc"]
 
-HeavyIon=True
+## HeavyIon=True
+HeavyIon=False
 
 ################### Common settings #######
 
@@ -34,6 +36,7 @@ GlobalTags_data={
 GlobalTags_MC={
     "RECO":["80X_mcRun2_asymptotic_2016_miniAODv2_v1","XXX"],\
     "RAW":["80X_mcRun2_asymptotic_2016_v3","XXX"],\
+    ## "RAW":["80X_mcRun2_asymptotic_RealisticBS_25ns_13TeV2016_v1_mc","XXX"],\
     }
 
 ExtraOptions=[]
@@ -53,7 +56,8 @@ if __name__ == '__main__':
                 GlobalTags=GlobalTags_data
                 endName=".py"
             else:
-                INFILE="/store/mc/RunIISpring16DR80/TT_TuneCUETP8M1_13TeV-powheg-pythia8/GEN-SIM-RAW/FlatPU20to70HcalNZSRAW_withHLT_80X_mcRun2_asymptotic_v14_ext3-v1/50000/CE22C0CB-9965-E611-9101-0025905C4262.root"                
+                ## INFILE="/store/mc/RunIISpring16DR80/TT_TuneCUETP8M1_13TeV-powheg-pythia8/GEN-SIM-RAW/FlatPU20to70HcalNZSRAW_withHLT_80X_mcRun2_asymptotic_v14_ext3-v1/50000/CE22C0CB-9965-E611-9101-0025905C4262.root"
+                INFILE="file:/afs/cern.ch/user/j/jalimena/public/Stage2DigiHlt80X/mchamp600/hist_0.root"
                 GlobalTags=GlobalTags_MC
                 endName="_MC.py"
 
@@ -109,5 +113,5 @@ if __name__ == '__main__':
                 
             print workflow, DataOrMC, pSet, GlobalTag
             print driverOptions + "\n"
-            ## os.system("cmsDriver.py " + driverOptions)
+            os.system("cmsDriver.py " + driverOptions)
 
