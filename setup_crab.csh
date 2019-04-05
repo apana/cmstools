@@ -23,8 +23,8 @@
 ##
 
 echo "\nSetting up CRAB3"
-## source /cvmfs/cms.cern.ch/crab3/crab.csh
-source /cvmfs/cms.cern.ch/crab3/crab_standalone.csh
+source /cvmfs/cms.cern.ch/crab3/crab.csh
+## source /cvmfs/cms.cern.ch/crab3/crab_standalone.csh
 ## eval `sh /cvmfs/cms.cern.ch/crab3/crab.sh -csh`
 crab --version
 

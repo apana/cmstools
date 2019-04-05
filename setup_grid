@@ -17,8 +17,9 @@ if ( ! $?CMS_PATH ) then
 endif
 
 set SL6=`cat /etc/redhat-release | grep -c Ramsey`
+set SL7=`cat /etc/redhat-release | grep -c Nitrogen`
 if ( ! $?GLITE_LOCATION ) then
-  if ( $SL6 == 0 ) then
+  if ( $SL6 == 0 && $SL7 == 0 ) then
     echo
     echo "Setting up gLite_SL5 environment"
     source /uscmst1/prod/grid/gLite_SL5.csh
